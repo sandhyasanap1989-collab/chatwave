@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ChatWave</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #e9eef5;
+        }
+
+        .chat-container {
+            width: 450px;
+            height: 90vh;
+            margin: 5vh auto;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .online {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f9fc;
+        }
+
+        .message {
+            max-width: 75%;
+            background: white;
+            padding: 10px 14px;
+            margin: 10px 0;
+            border-radius: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+
+        .name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+
+        .text {
+            font-size: 15px;
+            color: #222;
+        }
+
+        .input-area {
+            padding: 12px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 8px;
+            background: white;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .input-area button {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 0 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .input-area button:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 500px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="header">
+        <div class="avatar">💬</div>
+
+        <div>
+            <h2>ChatWave</h2>
+            <div class="online">🟢 Online</div>
+        </div>
+    </div>
+
+    <div class="messages" id="messages">
+
+        {% for msg in messages %}
+        <div class="message">
+            <div class="name">{{ msg.name }}</div>
+            <div class="text">{{ msg.message }}</div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <form class="input-area" action="/send" method="POST">
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Your name"
+            required
+        >
+
+        <input
+            type="text"
+            name="message"
+            placeholder="Type a message..."
+            required
+        >
+
+        <button type="submit">Send</button>
+
+    </form>
+
+</div>
+
+<script>
+    const messages = document.getElementById("messages");
+    messages.scrollTop = messages.scrollHeight;
+</script>
+
+</body>
+</html>
