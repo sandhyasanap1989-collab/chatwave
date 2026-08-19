@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+
+    <!-- Important for mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ChatWave</title>
 
     <style>
@@ -22,12 +26,15 @@
             width: 100%;
             max-width: 500px;
             height: 100vh;
+            height: 100dvh;
             margin: 0 auto;
             background: white;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
+        /* HEADER */
         .header {
             background: #2563eb;
             color: white;
@@ -35,6 +42,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .avatar {
@@ -60,6 +68,7 @@
             margin-top: 2px;
         }
 
+        /* MESSAGES */
         .messages {
             flex: 1;
             padding: 12px;
@@ -69,13 +78,14 @@
 
         .message {
             width: fit-content;
-            max-width: 80%;
+            max-width: 85%;
             background: white;
             padding: 9px 12px;
             margin: 8px 0;
             border-radius: 13px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
             word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .name {
@@ -90,30 +100,29 @@
             color: #222;
         }
 
-        .name-area,
-        .input-area {
+        /* NAME FORM */
+        .name-area {
             padding: 10px;
             border-top: 1px solid #ddd;
             display: flex;
             gap: 7px;
             background: white;
+            flex-shrink: 0;
         }
 
-        .name-area input,
-        .input-area input {
+        .name-area input {
             min-width: 0;
             flex: 1;
             padding: 11px 13px;
             border: 1px solid #ddd;
             border-radius: 22px;
             outline: none;
-            font-size: 15px;
+            font-size: 16px;
         }
 
-        .name-area button,
-        .input-area button {
+        .name-area button {
             border: none;
-            background: #2563eb;
+            background: #16a34a;
             color: white;
             padding: 0 16px;
             border-radius: 22px;
@@ -122,15 +131,49 @@
             white-space: nowrap;
         }
 
-        .name-area button {
-            background: #16a34a;
+        /* MESSAGE FORM */
+        .input-area {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 7px;
+            background: white;
+            flex-shrink: 0;
         }
 
+        .input-area input {
+            min-width: 0;
+            flex: 1;
+            padding: 11px 13px;
+            border: 1px solid #ddd;
+            border-radius: 22px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .input-area button {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 0 17px;
+            border-radius: 22px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .input-area button:hover {
+            background: #1d4ed8;
+        }
+
+        /* MOBILE */
         @media (max-width: 500px) {
 
             .chat-container {
+                width: 100%;
                 max-width: none;
-                height: 100dvh;
+                margin: 0;
+                border-radius: 0;
             }
 
             .header {
@@ -145,18 +188,18 @@
                 max-width: 85%;
             }
 
-            .input-area,
-            .name-area {
+            .name-area,
+            .input-area {
                 padding: 8px;
             }
 
-            .input-area input,
-            .name-area input {
+            .name-area input,
+            .input-area input {
                 font-size: 16px;
             }
 
-            .input-area button,
-            .name-area button {
+            .name-area button,
+            .input-area button {
                 padding: 0 14px;
             }
         }
@@ -167,27 +210,46 @@
 
 <div class="chat-container">
 
+    <!-- HEADER -->
     <div class="header">
+
         <div class="avatar">💬</div>
 
         <div>
             <h2>ChatWave</h2>
             <div class="online">🟢 Online</div>
         </div>
+
     </div>
 
+
+    <!-- MESSAGES -->
     <div class="messages" id="messages">
 
         {% for msg in messages %}
+
         <div class="message">
-            <div class="name">{{ msg.name }}</div>
-            <div class="text">{{ msg.message }}</div>
+
+            <div class="name">
+                {{ msg.name }}
+            </div>
+
+            <div class="text">
+                {{ msg.message }}
+            </div>
+
         </div>
+
         {% endfor %}
 
     </div>
 
+
+    <!-- NAME / MESSAGE FORM -->
+
     {% if not session.get("name") %}
+
+    <!-- Show this only when the user has not saved a name -->
 
     <form class="name-area" action="/set-name" method="POST">
 
@@ -199,11 +261,15 @@
             autocomplete="off"
         >
 
-        <button type="submit">Save</button>
+        <button type="submit">
+            Save
+        </button>
 
     </form>
 
     {% else %}
+
+    <!-- After saving the name, show only the message box -->
 
     <form class="input-area" action="/send" method="POST">
 
@@ -215,17 +281,25 @@
             autocomplete="off"
         >
 
-        <button type="submit">Send</button>
+        <button type="submit">
+            Send
+        </button>
 
     </form>
 
     {% endif %}
 
+
 </div>
 
+
 <script>
+    // Automatically scroll to the newest message
     const messages = document.getElementById("messages");
-    messages.scrollTop = messages.scrollHeight;
+
+    if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+    }
 </script>
 
 </body>
