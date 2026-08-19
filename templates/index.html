@@ -85,6 +85,31 @@
             color: #222;
         }
 
+        .name-area {
+            padding: 12px;
+            background: #f7f9fc;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 8px;
+        }
+
+        .name-area input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .name-area button {
+            border: none;
+            background: #16a34a;
+            color: white;
+            padding: 0 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
         .input-area {
             padding: 12px;
             border-top: 1px solid #ddd;
@@ -150,25 +175,39 @@
 
     </div>
 
-    <form class="input-area" action="/send" method="POST">
+
+    {% if not session.get("name") %}
+
+    <form class="name-area" action="/set-name" method="POST">
 
         <input
             type="text"
             name="name"
-            placeholder="Your name"
+            placeholder="Enter your name"
             required
         >
+
+        <button type="submit">Save Name</button>
+
+    </form>
+
+    {% else %}
+
+    <form class="input-area" action="/send" method="POST">
 
         <input
             type="text"
             name="message"
             placeholder="Type a message..."
             required
+            autocomplete="off"
         >
 
         <button type="submit">Send</button>
 
     </form>
+
+    {% endif %}
 
 </div>
 
