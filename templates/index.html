@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatWave</title>
 
     <style>
@@ -8,20 +9,21 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: Arial, sans-serif;
             background: #e9eef5;
         }
 
         .chat-container {
-            width: 450px;
-            height: 90vh;
-            margin: 5vh auto;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            margin: 0 auto;
             background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
         }
@@ -29,55 +31,58 @@
         .header {
             background: #2563eb;
             color: white;
-            padding: 18px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .avatar {
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
             border-radius: 50%;
             background: white;
             color: #2563eb;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 19px;
         }
 
         .online {
             font-size: 12px;
-            opacity: 0.9;
+            margin-top: 2px;
         }
 
         .messages {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             overflow-y: auto;
             background: #f7f9fc;
         }
 
         .message {
-            max-width: 75%;
+            width: fit-content;
+            max-width: 80%;
             background: white;
-            padding: 10px 14px;
-            margin: 10px 0;
-            border-radius: 14px;
+            padding: 9px 12px;
+            margin: 8px 0;
+            border-radius: 13px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            word-wrap: break-word;
         }
 
         .name {
             font-size: 12px;
             font-weight: bold;
             color: #2563eb;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .text {
@@ -85,67 +90,74 @@
             color: #222;
         }
 
-        .name-area {
-            padding: 12px;
-            background: #f7f9fc;
-            border-top: 1px solid #ddd;
-            display: flex;
-            gap: 8px;
-        }
-
-        .name-area input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            outline: none;
-        }
-
-        .name-area button {
-            border: none;
-            background: #16a34a;
-            color: white;
-            padding: 0 15px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
+        .name-area,
         .input-area {
-            padding: 12px;
+            padding: 10px;
             border-top: 1px solid #ddd;
             display: flex;
-            gap: 8px;
+            gap: 7px;
             background: white;
         }
 
+        .name-area input,
         .input-area input {
+            min-width: 0;
             flex: 1;
-            padding: 12px;
+            padding: 11px 13px;
             border: 1px solid #ddd;
-            border-radius: 25px;
+            border-radius: 22px;
             outline: none;
+            font-size: 15px;
         }
 
+        .name-area button,
         .input-area button {
             border: none;
             background: #2563eb;
             color: white;
-            padding: 0 18px;
-            border-radius: 25px;
+            padding: 0 16px;
+            border-radius: 22px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
+            white-space: nowrap;
         }
 
-        .input-area button:hover {
-            background: #1d4ed8;
+        .name-area button {
+            background: #16a34a;
         }
 
         @media (max-width: 500px) {
+
             .chat-container {
-                width: 100%;
-                height: 100vh;
-                margin: 0;
-                border-radius: 0;
+                max-width: none;
+                height: 100dvh;
+            }
+
+            .header {
+                padding: 12px;
+            }
+
+            .messages {
+                padding: 10px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .input-area,
+            .name-area {
+                padding: 8px;
+            }
+
+            .input-area input,
+            .name-area input {
+                font-size: 16px;
+            }
+
+            .input-area button,
+            .name-area button {
+                padding: 0 14px;
             }
         }
     </style>
@@ -175,7 +187,6 @@
 
     </div>
 
-
     {% if not session.get("name") %}
 
     <form class="name-area" action="/set-name" method="POST">
@@ -185,9 +196,10 @@
             name="name"
             placeholder="Enter your name"
             required
+            autocomplete="off"
         >
 
-        <button type="submit">Save Name</button>
+        <button type="submit">Save</button>
 
     </form>
 
