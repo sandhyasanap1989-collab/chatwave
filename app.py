@@ -343,8 +343,9 @@ def add_member():
 
     username = session["username"]
 
-    group_id = request.form.get("group_id", "")
+    group_id = request.form.get("group_id", "").strip()
 
+    # Get multiple selected users
     new_members = request.form.getlist("members")
 
     groups = load_groups()
@@ -359,14 +360,12 @@ def add_member():
     if group.get("creator") != username:
         return redirect("/")
 
+    # Add every selected member
     for new_member in new_members:
 
         new_member = new_member.strip()
 
-        if new_member not in users:
-            continue
-
-        if new_member not in group["members"]:
+        if new_member in users and new_member not in group["members"]:
             group["members"].append(new_member)
 
     save_groups(groups)

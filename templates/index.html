@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ChatWave</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -22,8 +19,6 @@
             font-family: Arial, sans-serif;
             background: #e9eef5;
         }
-
-        /* MAIN */
 
         .chat-container {
             width: 450px;
@@ -77,7 +72,7 @@
         }
 
         .password-box input {
-            padding-right: 38px;
+            padding-right: 40px;
         }
 
         .show-password {
@@ -182,7 +177,7 @@
             position: absolute;
             right: 0;
             top: 42px;
-            width: 175px;
+            width: 190px;
             background: white;
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.25);
@@ -298,9 +293,11 @@
             cursor: pointer;
         }
 
+        /* ADD MEMBERS */
+
         .group-members-select {
             width: 100%;
-            min-height: 100px;
+            min-height: 110px;
             border: 1px solid #ddd;
             border-radius: 9px;
             padding: 6px;
@@ -313,7 +310,7 @@
             border: none;
             background: #7c3aed;
             color: white;
-            padding: 9px;
+            padding: 10px;
             border-radius: 9px;
             cursor: pointer;
         }
@@ -322,20 +319,6 @@
             font-size: 11px;
             color: #777;
             margin-top: 5px;
-        }
-
-        /* ADMIN */
-
-        .admin-area {
-            padding: 8px 10px;
-            background: #f8fafc;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .admin-title {
-            font-size: 11px;
-            color: #777;
-            margin-bottom: 5px;
         }
 
         /* MESSAGES */
@@ -418,7 +401,6 @@
         /* MOBILE */
 
         @media (max-width: 500px) {
-
             .chat-container {
                 width: 100%;
                 height: 100dvh;
@@ -437,12 +419,9 @@
             .message {
                 max-width: 85%;
             }
-
         }
-
     </style>
 </head>
-
 
 <body>
 
@@ -480,6 +459,7 @@
                     name="password"
                     placeholder="Password"
                     required
+                    autocomplete="current-password"
                 >
 
                 <button
@@ -509,6 +489,7 @@
                 name="username"
                 placeholder="Choose a username"
                 required
+                autocomplete="username"
             >
 
             <div class="password-box">
@@ -520,6 +501,7 @@
                     placeholder="Create password (6+ characters)"
                     required
                     minlength="6"
+                    autocomplete="new-password"
                 >
 
                 <button
@@ -543,9 +525,7 @@
 
     </div>
 
-
 {% else %}
-
 
     <!-- HEADER -->
 
@@ -581,8 +561,7 @@
 
         </div>
 
-
-        <!-- THREE DOT MENU -->
+        <!-- THREE DOTS -->
 
         <div class="menu-container">
 
@@ -593,7 +572,6 @@
             >
                 ⋮
             </button>
-
 
             <div
                 class="dropdown-menu"
@@ -609,10 +587,9 @@
                     👥 Group
                 </button>
 
+                <!-- EXIT PRIVATE CHAT -->
 
                 {% if chat_type == "private" and chat_with %}
-
-                <!-- EXIT CHAT -->
 
                 <button
                     type="button"
@@ -623,10 +600,9 @@
 
                 {% endif %}
 
+                <!-- EXIT GROUP -->
 
                 {% if chat_type == "group" and selected_group %}
-
-                <!-- EXIT GROUP -->
 
                 <button
                     type="button"
@@ -635,10 +611,9 @@
                     🚪 Exit Group
                 </button>
 
+                <!-- CLEAR GROUP -->
 
                 {% if selected_group.creator == username %}
-
-                <!-- CLEAR GROUP -->
 
                 <button
                     type="button"
@@ -652,10 +627,9 @@
 
                 {% endif %}
 
+                <!-- CLEAR PRIVATE -->
 
                 {% if chat_type == "private" and chat_with %}
-
-                <!-- CLEAR PRIVATE -->
 
                 <button
                     type="button"
@@ -666,7 +640,6 @@
                 </button>
 
                 {% endif %}
-
 
                 <!-- LOGOUT -->
 
@@ -706,9 +679,7 @@
             >
 
                 <option value="" disabled>
-
                     Select person
-
                 </option>
 
                 {% for user in users %}
@@ -719,9 +690,7 @@
                     selected
                     {% endif %}
                 >
-
                     {{ user }}
-
                 </option>
 
                 {% endfor %}
@@ -784,9 +753,7 @@
                     selected
                     {% endif %}
                 >
-
                     {{ group.name }}
-
                 </option>
 
                 {% endfor %}
@@ -846,6 +813,14 @@
                 method="POST"
             >
 
+                <!-- IMPORTANT GROUP ID -->
+
+                <input
+                    type="hidden"
+                    name="group_id"
+                    value="{{ group_id }}"
+                >
+
                 <select
                     name="members"
                     class="group-members-select"
@@ -867,14 +842,18 @@
                 </select>
 
                 <div class="group-hint">
-                    Hold Ctrl and select multiple people.
+                    On computer: hold Ctrl and select multiple people.
+                </div>
+
+                <div class="group-hint">
+                    On mobile: tap and select the people you want to add.
                 </div>
 
                 <button
                     type="submit"
                     class="add-members-button"
                 >
-                    Add Selected Members
+                    ➕ Add Selected Members
                 </button>
 
             </form>
@@ -886,34 +865,37 @@
     </div>
 
 
-    <!-- HIDDEN EXIT CHAT -->
+    <!-- EXIT CHAT FORM -->
 
     <form
         id="exitChatForm"
         action="/exit-chat"
         method="POST"
         style="display:none;"
-    ></form>
+    >
+    </form>
 
 
-    <!-- HIDDEN EXIT GROUP -->
+    <!-- EXIT GROUP FORM -->
 
     <form
         id="exitGroupForm"
         action="/exit-group"
         method="POST"
         style="display:none;"
-    ></form>
+    >
+    </form>
 
 
-    <!-- HIDDEN CLEAR -->
+    <!-- CLEAR CHAT FORM -->
 
     <form
         id="clearChatForm"
         action="/clear-chat"
         method="POST"
         style="display:none;"
-    ></form>
+    >
+    </form>
 
 
     <!-- MESSAGES -->
@@ -993,7 +975,6 @@
 
     {% endif %}
 
-
 {% endif %}
 
 </div>
@@ -1019,11 +1000,10 @@
             button.textContent = "👁";
 
         }
-
     }
 
 
-    /* MENU */
+    /* THREE DOT MENU */
 
     function toggleMenu() {
 
@@ -1035,7 +1015,6 @@
             menu.classList.toggle("show");
 
         }
-
     }
 
 
@@ -1060,7 +1039,6 @@
             menu.classList.remove("show");
 
         }
-
     }
 
 
@@ -1077,18 +1055,17 @@
 
         }
 
-        if (
-            confirm(
-                "Exit this chat?"
-            )
-        ) {
+        if (confirm("Exit this chat?")) {
 
-            document
-                .getElementById("exitChatForm")
-                .submit();
+            const form =
+                document.getElementById("exitChatForm");
 
+            if (form) {
+
+                form.submit();
+
+            }
         }
-
     }
 
 
@@ -1105,18 +1082,17 @@
 
         }
 
-        if (
-            confirm(
-                "Are you sure you want to exit this group?"
-            )
-        ) {
+        if (confirm("Are you sure you want to exit this group?")) {
 
-            document
-                .getElementById("exitGroupForm")
-                .submit();
+            const form =
+                document.getElementById("exitGroupForm");
 
+            if (form) {
+
+                form.submit();
+
+            }
         }
-
     }
 
 
@@ -1133,18 +1109,17 @@
 
         }
 
-        if (
-            confirm(
-                "Clear this chat?"
-            )
-        ) {
+        if (confirm("Clear this chat?")) {
 
-            document
-                .getElementById("clearChatForm")
-                .submit();
+            const form =
+                document.getElementById("clearChatForm");
 
+            if (form) {
+
+                form.submit();
+
+            }
         }
-
     }
 
 
@@ -1155,14 +1130,10 @@
         function(event) {
 
             const container =
-                document.querySelector(
-                    ".menu-container"
-                );
+                document.querySelector(".menu-container");
 
             const menu =
-                document.getElementById(
-                    "dropdownMenu"
-                );
+                document.getElementById("dropdownMenu");
 
             if (
                 container &&
@@ -1210,8 +1181,7 @@
 
             const response =
                 await fetch(
-                    "/messages?time=" +
-                    Date.now()
+                    "/messages?time=" + Date.now()
                 );
 
             if (!response.ok) {
@@ -1229,10 +1199,7 @@
                 ).length;
 
 
-            if (
-                messages.length !==
-                currentCount
-            ) {
+            if (messages.length !== currentCount) {
 
                 messagesBox.innerHTML = "";
 
@@ -1243,9 +1210,7 @@
                 if (messages.length === 0) {
 
                     const empty =
-                        document.createElement(
-                            "div"
-                        );
+                        document.createElement("div");
 
                     empty.className =
                         "no-chat";
@@ -1253,9 +1218,7 @@
                     empty.textContent =
                         "No messages yet. 👋";
 
-                    messagesBox.appendChild(
-                        empty
-                    );
+                    messagesBox.appendChild(empty);
 
                 } else {
 
@@ -1263,17 +1226,14 @@
                         function(msg) {
 
                             const messageDiv =
-                                document.createElement(
-                                    "div"
-                                );
+                                document.createElement("div");
 
                             messageDiv.className =
                                 "message";
 
 
                             if (
-                                msg.sender ===
-                                currentUser
+                                msg.sender === currentUser
                             ) {
 
                                 messageDiv.classList.add(
@@ -1284,9 +1244,7 @@
 
 
                             const nameDiv =
-                                document.createElement(
-                                    "div"
-                                );
+                                document.createElement("div");
 
                             nameDiv.className =
                                 "name";
@@ -1296,9 +1254,7 @@
 
 
                             const textDiv =
-                                document.createElement(
-                                    "div"
-                                );
+                                document.createElement("div");
 
                             textDiv.className =
                                 "text";
