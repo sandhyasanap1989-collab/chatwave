@@ -8,6 +8,7 @@
     <title>ChatWave</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -23,6 +24,7 @@
         }
 
         /* MAIN */
+
         .chat-container {
             width: 450px;
             height: 90vh;
@@ -30,12 +32,13 @@
             background: white;
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
         }
 
         /* LOGIN */
+
         .auth-container {
             width: 100%;
             height: 100%;
@@ -69,7 +72,6 @@
             font-size: 15px;
         }
 
-        /* PASSWORD */
         .password-box {
             position: relative;
         }
@@ -115,6 +117,7 @@
         }
 
         /* HEADER */
+
         .header {
             background: #2563eb;
             color: white;
@@ -157,7 +160,8 @@
             opacity: 0.9;
         }
 
-        /* THREE DOT MENU */
+        /* THREE DOTS */
+
         .menu-container {
             position: relative;
             flex-shrink: 0;
@@ -178,10 +182,10 @@
             position: absolute;
             right: 0;
             top: 42px;
-            width: 155px;
+            width: 175px;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
             overflow: hidden;
             z-index: 1000;
         }
@@ -209,7 +213,8 @@
             color: #dc2626;
         }
 
-        /* CHAT SELECTION */
+        /* PRIVATE CHAT */
+
         .chat-selection {
             padding: 10px;
             border-bottom: 1px solid #ddd;
@@ -249,6 +254,7 @@
         }
 
         /* GROUP PANEL */
+
         .group-panel {
             display: none;
             padding: 10px;
@@ -261,7 +267,7 @@
             display: block;
         }
 
-        .group-panel-title {
+        .group-title {
             font-size: 11px;
             font-weight: bold;
             color: #777;
@@ -271,7 +277,7 @@
         .create-group-form {
             display: flex;
             gap: 7px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .create-group-form input {
@@ -292,7 +298,34 @@
             cursor: pointer;
         }
 
+        .group-members-select {
+            width: 100%;
+            min-height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            padding: 6px;
+            background: white;
+        }
+
+        .add-members-button {
+            width: 100%;
+            margin-top: 7px;
+            border: none;
+            background: #7c3aed;
+            color: white;
+            padding: 9px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .group-hint {
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+        }
+
         /* ADMIN */
+
         .admin-area {
             padding: 8px 10px;
             background: #f8fafc;
@@ -305,29 +338,8 @@
             margin-bottom: 5px;
         }
 
-        .admin-form {
-            display: flex;
-            gap: 7px;
-        }
-
-        .admin-form select {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: white;
-        }
-
-        .admin-form button {
-            border: none;
-            background: #7c3aed;
-            color: white;
-            padding: 0 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
         /* MESSAGES */
+
         .messages {
             flex: 1;
             padding: 15px;
@@ -342,7 +354,7 @@
             padding: 10px 14px;
             margin: 10px 0;
             border-radius: 14px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             word-wrap: break-word;
         }
 
@@ -374,6 +386,7 @@
         }
 
         /* INPUT */
+
         .input-area {
             padding: 10px;
             border-top: 1px solid #ddd;
@@ -403,7 +416,9 @@
         }
 
         /* MOBILE */
+
         @media (max-width: 500px) {
+
             .chat-container {
                 width: 100%;
                 height: 100dvh;
@@ -422,9 +437,12 @@
             .message {
                 max-width: 85%;
             }
+
         }
+
     </style>
 </head>
+
 
 <body>
 
@@ -433,6 +451,7 @@
 {% if not logged_in %}
 
     <!-- LOGIN -->
+
     <div class="auth-container">
 
         <div class="logo">
@@ -443,7 +462,6 @@
             Private messaging made simple
         </div>
 
-        <!-- LOGIN -->
         <form action="/login" method="POST">
 
             <input
@@ -462,14 +480,15 @@
                     name="password"
                     placeholder="Password"
                     required
-                    autocomplete="current-password"
                 >
 
                 <button
                     type="button"
                     class="show-password"
                     onclick="togglePassword('login-password', this)"
-                >👁</button>
+                >
+                    👁
+                </button>
 
             </div>
 
@@ -483,7 +502,6 @@
             New to ChatWave?
         </div>
 
-        <!-- REGISTER -->
         <form action="/register" method="POST">
 
             <input
@@ -491,7 +509,6 @@
                 name="username"
                 placeholder="Choose a username"
                 required
-                autocomplete="username"
             >
 
             <div class="password-box">
@@ -503,14 +520,15 @@
                     placeholder="Create password (6+ characters)"
                     required
                     minlength="6"
-                    autocomplete="new-password"
                 >
 
                 <button
                     type="button"
                     class="show-password"
                     onclick="togglePassword('register-password', this)"
-                >👁</button>
+                >
+                    👁
+                </button>
 
             </div>
 
@@ -525,9 +543,12 @@
 
     </div>
 
+
 {% else %}
 
+
     <!-- HEADER -->
+
     <div class="header">
 
         <div class="avatar">
@@ -560,7 +581,9 @@
 
         </div>
 
-        <!-- THREE DOTS -->
+
+        <!-- THREE DOT MENU -->
+
         <div class="menu-container">
 
             <button
@@ -571,19 +594,68 @@
                 ⋮
             </button>
 
+
             <div
                 class="dropdown-menu"
                 id="dropdownMenu"
             >
 
+                <!-- GROUP -->
+
                 <button
                     type="button"
-                    onclick="openGroupPanel()"
+                    onclick="toggleGroupPanel()"
                 >
                     👥 Group
                 </button>
 
-                {% if chat_type %}
+
+                {% if chat_type == "private" and chat_with %}
+
+                <!-- EXIT CHAT -->
+
+                <button
+                    type="button"
+                    onclick="exitChat()"
+                >
+                    🚪 Exit Chat
+                </button>
+
+                {% endif %}
+
+
+                {% if chat_type == "group" and selected_group %}
+
+                <!-- EXIT GROUP -->
+
+                <button
+                    type="button"
+                    onclick="exitGroup()"
+                >
+                    🚪 Exit Group
+                </button>
+
+
+                {% if selected_group.creator == username %}
+
+                <!-- CLEAR GROUP -->
+
+                <button
+                    type="button"
+                    class="danger"
+                    onclick="clearCurrentChat()"
+                >
+                    🗑️ Clear Group Chat
+                </button>
+
+                {% endif %}
+
+                {% endif %}
+
+
+                {% if chat_type == "private" and chat_with %}
+
+                <!-- CLEAR PRIVATE -->
 
                 <button
                     type="button"
@@ -594,6 +666,9 @@
                 </button>
 
                 {% endif %}
+
+
+                <!-- LOGOUT -->
 
                 <button
                     type="button"
@@ -610,6 +685,7 @@
 
 
     <!-- PRIVATE CHAT -->
+
     <div class="chat-selection">
 
         <div class="selection-title">
@@ -624,14 +700,15 @@
             class="selection-form"
         >
 
-            <select name="chat_with" required>
+            <select
+                name="chat_with"
+                required
+            >
 
-                <option value="" disabled
-                    {% if not chat_type == "private" %}
-                        selected
-                    {% endif %}
-                >
+                <option value="" disabled>
+
                     Select person
+
                 </option>
 
                 {% for user in users %}
@@ -639,10 +716,12 @@
                 <option
                     value="{{ user }}"
                     {% if chat_type == "private" and chat_with == user %}
-                        selected
+                    selected
                     {% endif %}
                 >
+
                     {{ user }}
+
                 </option>
 
                 {% endfor %}
@@ -657,7 +736,7 @@
 
         {% else %}
 
-        <div style="font-size:12px;color:#777;padding:5px 0;">
+        <div style="font-size:12px;color:#777;">
             No other users yet.
         </div>
 
@@ -667,14 +746,18 @@
 
 
     <!-- GROUP PANEL -->
+
     <div
         class="group-panel"
         id="groupPanel"
     >
 
-        <div class="group-panel-title">
+        <div class="group-title">
             GROUPS
         </div>
+
+
+        <!-- SELECT GROUP -->
 
         {% if groups %}
 
@@ -684,7 +767,10 @@
             class="selection-form"
         >
 
-            <select name="group_id" required>
+            <select
+                name="group_id"
+                required
+            >
 
                 <option value="" disabled>
                     Select group
@@ -695,10 +781,12 @@
                 <option
                     value="{{ group.id }}"
                     {% if chat_type == "group" and group_id == group.id %}
-                        selected
+                    selected
                     {% endif %}
                 >
+
                     {{ group.name }}
+
                 </option>
 
                 {% endfor %}
@@ -721,6 +809,7 @@
 
 
         <!-- CREATE GROUP -->
+
         <form
             action="/create-group"
             method="POST"
@@ -741,41 +830,27 @@
 
         </form>
 
-    </div>
 
+        <!-- ADD MULTIPLE MEMBERS -->
 
-    <!-- GROUP ADMIN -->
-    {% if chat_type == "group" and selected_group %}
+        {% if chat_type == "group" and selected_group %}
 
-        {% if selected_group.creator == username %}
+            {% if selected_group.creator == username %}
 
-        <div class="admin-area">
-
-            <div class="admin-title">
-                ADD MEMBER
+            <div class="group-title">
+                ADD MEMBERS
             </div>
 
             <form
                 action="/add-member"
                 method="POST"
-                class="admin-form"
             >
 
-                <input
-                    type="hidden"
-                    name="group_id"
-                    value="{{ group_id }}"
+                <select
+                    name="members"
+                    class="group-members-select"
+                    multiple
                 >
-
-                <select name="member" required>
-
-                    <option
-                        value=""
-                        disabled
-                        selected
-                    >
-                        Select user
-                    </option>
 
                     {% for user in users %}
 
@@ -791,21 +866,47 @@
 
                 </select>
 
-                <button type="submit">
-                    Add
+                <div class="group-hint">
+                    Hold Ctrl and select multiple people.
+                </div>
+
+                <button
+                    type="submit"
+                    class="add-members-button"
+                >
+                    Add Selected Members
                 </button>
 
             </form>
 
-        </div>
+            {% endif %}
 
         {% endif %}
 
-    {% endif %}
+    </div>
 
 
-    <!-- HIDDEN CLEAR CHAT FORM -->
-    {% if chat_type == "private" and chat_with %}
+    <!-- HIDDEN EXIT CHAT -->
+
+    <form
+        id="exitChatForm"
+        action="/exit-chat"
+        method="POST"
+        style="display:none;"
+    ></form>
+
+
+    <!-- HIDDEN EXIT GROUP -->
+
+    <form
+        id="exitGroupForm"
+        action="/exit-group"
+        method="POST"
+        style="display:none;"
+    ></form>
+
+
+    <!-- HIDDEN CLEAR -->
 
     <form
         id="clearChatForm"
@@ -814,23 +915,9 @@
         style="display:none;"
     ></form>
 
-    {% elif chat_type == "group" and selected_group %}
-
-        {% if selected_group.creator == username %}
-
-        <form
-            id="clearChatForm"
-            action="/clear-chat"
-            method="POST"
-            style="display:none;"
-        ></form>
-
-        {% endif %}
-
-    {% endif %}
-
 
     <!-- MESSAGES -->
+
     <div
         class="messages"
         id="messages"
@@ -845,7 +932,7 @@
                 <div
                     class="message
                     {% if msg.sender == username %}
-                        my-message
+                    my-message
                     {% endif %}"
                 >
 
@@ -881,6 +968,7 @@
 
 
     <!-- SEND -->
+
     {% if chat_type %}
 
     <form
@@ -905,6 +993,7 @@
 
     {% endif %}
 
+
 {% endif %}
 
 </div>
@@ -913,6 +1002,7 @@
 <script>
 
     /* PASSWORD */
+
     function togglePassword(inputId, button) {
 
         const input =
@@ -929,29 +1019,35 @@
             button.textContent = "👁";
 
         }
+
     }
 
 
-    /* THREE DOT MENU */
+    /* MENU */
+
     function toggleMenu() {
 
         const menu =
             document.getElementById("dropdownMenu");
 
         if (menu) {
+
             menu.classList.toggle("show");
+
         }
+
     }
 
 
-    /* OPEN GROUP */
-    function openGroupPanel() {
+    /* GROUP PANEL */
 
-        const menu =
-            document.getElementById("dropdownMenu");
+    function toggleGroupPanel() {
 
         const panel =
             document.getElementById("groupPanel");
+
+        const menu =
+            document.getElementById("dropdownMenu");
 
         if (panel) {
 
@@ -964,24 +1060,77 @@
             menu.classList.remove("show");
 
         }
+
+    }
+
+
+    /* EXIT CHAT */
+
+    function exitChat() {
+
+        const menu =
+            document.getElementById("dropdownMenu");
+
+        if (menu) {
+
+            menu.classList.remove("show");
+
+        }
+
+        if (
+            confirm(
+                "Exit this chat?"
+            )
+        ) {
+
+            document
+                .getElementById("exitChatForm")
+                .submit();
+
+        }
+
+    }
+
+
+    /* EXIT GROUP */
+
+    function exitGroup() {
+
+        const menu =
+            document.getElementById("dropdownMenu");
+
+        if (menu) {
+
+            menu.classList.remove("show");
+
+        }
+
+        if (
+            confirm(
+                "Are you sure you want to exit this group?"
+            )
+        ) {
+
+            document
+                .getElementById("exitGroupForm")
+                .submit();
+
+        }
+
     }
 
 
     /* CLEAR CHAT */
+
     function clearCurrentChat() {
 
         const menu =
             document.getElementById("dropdownMenu");
 
         if (menu) {
+
             menu.classList.remove("show");
-        }
 
-        const form =
-            document.getElementById("clearChatForm");
-
-        if (!form) {
-            return;
         }
 
         if (
@@ -990,22 +1139,30 @@
             )
         ) {
 
-            form.submit();
+            document
+                .getElementById("clearChatForm")
+                .submit();
 
         }
+
     }
 
 
-    /* CLOSE MENU WHEN CLICKING OUTSIDE */
+    /* CLOSE MENU */
+
     document.addEventListener(
         "click",
         function(event) {
 
             const container =
-                document.querySelector(".menu-container");
+                document.querySelector(
+                    ".menu-container"
+                );
 
             const menu =
-                document.getElementById("dropdownMenu");
+                document.getElementById(
+                    "dropdownMenu"
+                );
 
             if (
                 container &&
@@ -1022,6 +1179,7 @@
 
 
     /* MESSAGES */
+
     const messagesBox =
         document.getElementById("messages");
 
@@ -1034,14 +1192,18 @@
                 messagesBox.scrollHeight;
 
         }
+
     }
 
 
     /* AUTO REFRESH */
+
     async function checkMessages() {
 
         if (!messagesBox) {
+
             return;
+
         }
 
         try {
@@ -1053,7 +1215,9 @@
                 );
 
             if (!response.ok) {
+
                 return;
+
             }
 
             const messages =
@@ -1079,7 +1243,9 @@
                 if (messages.length === 0) {
 
                     const empty =
-                        document.createElement("div");
+                        document.createElement(
+                            "div"
+                        );
 
                     empty.className =
                         "no-chat";
@@ -1087,7 +1253,9 @@
                     empty.textContent =
                         "No messages yet. 👋";
 
-                    messagesBox.appendChild(empty);
+                    messagesBox.appendChild(
+                        empty
+                    );
 
                 } else {
 
@@ -1155,7 +1323,6 @@
                     );
 
                 }
-
 
                 scrollToBottom();
 

@@ -247,6 +247,23 @@ def set_chat():
 
 
 # =========================
+# EXIT PRIVATE CHAT
+# =========================
+
+@app.route("/exit-chat", methods=["POST"])
+def exit_chat():
+
+    if "username" not in session:
+        return redirect("/")
+
+    session["chat_type"] = None
+    session.pop("chat_with", None)
+    session.pop("group_id", None)
+
+    return redirect("/")
+
+
+# =========================
 # CREATE GROUP
 # =========================
 
@@ -315,7 +332,7 @@ def set_group():
 
 
 # =========================
-# ADD MEMBER
+# ADD MULTIPLE MEMBERS
 # =========================
 
 @app.route("/add-member", methods=["POST"])
@@ -327,7 +344,8 @@ def add_member():
     username = session["username"]
 
     group_id = request.form.get("group_id", "")
-    new_member = request.form.get("member", "").strip()
+
+    new_members = request.form.getlist("members")
 
     groups = load_groups()
     users = load_users()
@@ -337,17 +355,76 @@ def add_member():
     if not group:
         return redirect("/")
 
-    # Only group creator can add
+    # Only creator can add members
     if group.get("creator") != username:
         return redirect("/")
 
-    if new_member not in users:
-        return redirect("/")
+    for new_member in new_members:
 
-    if new_member not in group["members"]:
-        group["members"].append(new_member)
+        new_member = new_member.strip()
+
+        if new_member not in users:
+            continue
+
+        if new_member not in group["members"]:
+            group["members"].append(new_member)
 
     save_groups(groups)
+
+    return redirect("/")
+
+
+# =========================
+# EXIT GROUP
+# =========================
+
+@app.route("/exit-group", methods=["POST"])
+def exit_group():
+
+    if "username" not in session:
+        return redirect("/")
+
+    username = session["username"]
+    group_id = session.get("group_id")
+
+    groups = load_groups()
+
+    group = groups.get(group_id)
+
+    if not group:
+        session["chat_type"] = None
+        session.pop("group_id", None)
+        return redirect("/")
+
+    # Remove current user
+    if username in group.get("members", []):
+        group["members"].remove(username)
+
+    # If creator exits, delete the group
+    if group.get("creator") == username:
+
+        # Remove group messages
+        messages = load_messages()
+
+        messages = [
+            msg for msg in messages
+            if not (
+                msg.get("type") == "group"
+                and msg.get("group_id") == group_id
+            )
+        ]
+
+        save_messages(messages)
+
+        del groups[group_id]
+
+    else:
+
+        save_groups(groups)
+
+    session["chat_type"] = None
+    session.pop("group_id", None)
+    session.pop("chat_with", None)
 
     return redirect("/")
 
@@ -566,29 +643,6 @@ def clear_chat():
 
 
 # =========================
-# =========================
-# TEMPORARY DATA RESET
-# =========================
-
-@app.route("/reset-all-data")
-def reset_all_data():
-
-    # Delete all users
-    save_users({})
-
-    # Delete all messages
-    save_messages([])
-
-    # Delete all groups
-    save_groups({})
-
-    session.clear()
-
-    return """
-    <h2>ChatWave data reset successfully.</h2>
-    <p>All users, passwords, messages and groups have been deleted.</p>
-    <p>IMPORTANT: Remove the /reset-all-data route from app.py now.</p>
-    """
 # RUN
 # =========================
 
