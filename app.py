@@ -566,6 +566,29 @@ def clear_chat():
 
 
 # =========================
+# =========================
+# TEMPORARY DATA RESET
+# =========================
+
+@app.route("/reset-all-data")
+def reset_all_data():
+
+    # Delete all users
+    save_users({})
+
+    # Delete all messages
+    save_messages([])
+
+    # Delete all groups
+    save_groups({})
+
+    session.clear()
+
+    return """
+    <h2>ChatWave data reset successfully.</h2>
+    <p>All users, passwords, messages and groups have been deleted.</p>
+    <p>IMPORTANT: Remove the /reset-all-data route from app.py now.</p>
+    """
 # RUN
 # =========================
 
