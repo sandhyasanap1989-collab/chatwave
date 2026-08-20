@@ -1,19 +1,38 @@
 from flask import Flask, render_template, request, redirect, session
+import json
+import os
 
 app = Flask(__name__)
-app.secret_key = "my_secret_key"
+app.secret_key = "chatwave-secret-key"
+
+MESSAGES_FILE = "messages.json"
+
+
+def load_messages():
+    if not os.path.exists(MESSAGES_FILE):
+        return []
+
+    try:
+        with open(MESSAGES_FILE, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except:
+        return []
+
+
+def save_messages(messages):
+    with open(MESSAGES_FILE, "w", encoding="utf-8") as file:
+        json.dump(messages, file, ensure_ascii=False, indent=2)
 
 
 @app.route("/")
 def home():
-    name = session.get("name")
-    messages = session.get("messages", [])
-    return render_template("index.html", name=name, messages=messages)
+    messages = load_messages()
+    return render_template("index.html", messages=messages)
 
 
 @app.route("/set-name", methods=["POST"])
 def set_name():
-    name = request.form.get("name")
+    name = request.form.get("name", "").strip()
 
     if name:
         session["name"] = name
@@ -23,22 +42,20 @@ def set_name():
 
 @app.route("/send", methods=["POST"])
 def send():
-    message = request.form.get("message")
+    name = session.get("name")
 
-    if message:
-        messages = session.get("messages", [])
+    message = request.form.get("message", "").strip()
+
+    if name and message:
+        messages = load_messages()
+
         messages.append({
-            "name": session.get("name", "User"),
+            "name": name,
             "message": message
         })
-        session["messages"] = messages
 
-    return redirect("/")
+        save_messages(messages)
 
-
-@app.route("/clear")
-def clear():
-    session.pop("messages", None)
     return redirect("/")
 
 
