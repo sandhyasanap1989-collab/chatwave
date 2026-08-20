@@ -10,8 +10,7 @@
             box-sizing: border-box;
         }
 
-        html,
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -297,11 +296,16 @@
 
         .group-members-select {
             width: 100%;
-            min-height: 110px;
+            min-height: 120px;
             border: 1px solid #ddd;
             border-radius: 9px;
             padding: 6px;
             background: white;
+            font-size: 14px;
+        }
+
+        .group-members-select option {
+            padding: 8px;
         }
 
         .add-members-button {
@@ -313,12 +317,18 @@
             padding: 10px;
             border-radius: 9px;
             cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-members-button:hover {
+            background: #6d28d9;
         }
 
         .group-hint {
             font-size: 11px;
             color: #777;
             margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         /* MESSAGES */
@@ -401,6 +411,7 @@
         /* MOBILE */
 
         @media (max-width: 500px) {
+
             .chat-container {
                 width: 100%;
                 height: 100dvh;
@@ -418,6 +429,10 @@
 
             .message {
                 max-width: 85%;
+            }
+
+            .dropdown-menu {
+                right: -5px;
             }
         }
     </style>
@@ -578,16 +593,12 @@
                 id="dropdownMenu"
             >
 
-                <!-- GROUP -->
-
                 <button
                     type="button"
                     onclick="toggleGroupPanel()"
                 >
                     👥 Group
                 </button>
-
-                <!-- EXIT PRIVATE CHAT -->
 
                 {% if chat_type == "private" and chat_with %}
 
@@ -600,8 +611,6 @@
 
                 {% endif %}
 
-                <!-- EXIT GROUP -->
-
                 {% if chat_type == "group" and selected_group %}
 
                 <button
@@ -610,8 +619,6 @@
                 >
                     🚪 Exit Group
                 </button>
-
-                <!-- CLEAR GROUP -->
 
                 {% if selected_group.creator == username %}
 
@@ -627,8 +634,6 @@
 
                 {% endif %}
 
-                <!-- CLEAR PRIVATE -->
-
                 {% if chat_type == "private" and chat_with %}
 
                 <button
@@ -641,8 +646,6 @@
 
                 {% endif %}
 
-                <!-- LOGOUT -->
-
                 <button
                     type="button"
                     onclick="window.location.href='/logout'"
@@ -651,11 +654,8 @@
                 </button>
 
             </div>
-
         </div>
-
     </div>
-
 
     <!-- PRIVATE CHAT -->
 
@@ -678,7 +678,13 @@
                 required
             >
 
-                <option value="" disabled>
+                <option
+                    value=""
+                    disabled
+                    {% if not chat_type == "private" %}
+                    selected
+                    {% endif %}
+                >
                     Select person
                 </option>
 
@@ -713,7 +719,6 @@
 
     </div>
 
-
     <!-- GROUP PANEL -->
 
     <div
@@ -724,7 +729,6 @@
         <div class="group-title">
             GROUPS
         </div>
-
 
         <!-- SELECT GROUP -->
 
@@ -741,7 +745,13 @@
                 required
             >
 
-                <option value="" disabled>
+                <option
+                    value=""
+                    disabled
+                    {% if chat_type != "group" %}
+                    selected
+                    {% endif %}
+                >
                     Select group
                 </option>
 
@@ -774,7 +784,6 @@
 
         {% endif %}
 
-
         <!-- CREATE GROUP -->
 
         <form
@@ -797,66 +806,53 @@
 
         </form>
 
-
         <!-- ADD MULTIPLE MEMBERS -->
 
         {% if chat_type == "group" and selected_group %}
 
             {% if selected_group.creator == username %}
 
-            <div class="group-title">
-                ADD MEMBERS
-            </div>
-
-            <form
-                action="/add-member"
-                method="POST"
-            >
-
-                <!-- IMPORTANT GROUP ID -->
-
-                <input
-                    type="hidden"
-                    name="group_id"
-                    value="{{ group_id }}"
-                >
-
-                <select
-                    name="members"
-                    class="group-members-select"
-                    multiple
-                >
-
-                    {% for user in users %}
-
-                        {% if user not in selected_group.members %}
-
-                        <option value="{{ user }}">
-                            {{ user }}
-                        </option>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </select>
-
-                <div class="group-hint">
-                    On computer: hold Ctrl and select multiple people.
+                <div class="group-title">
+                    ADD MEMBERS
                 </div>
 
-                <div class="group-hint">
-                    On mobile: tap and select the people you want to add.
-                </div>
-
-                <button
-                    type="submit"
-                    class="add-members-button"
+                <form
+                    action="/add-member"
+                    method="POST"
                 >
-                    ➕ Add Selected Members
-                </button>
 
-            </form>
+                    <select
+                        name="members"
+                        class="group-members-select"
+                        multiple
+                    >
+
+                        {% for user in users %}
+
+                            {% if user not in selected_group.members %}
+
+                                <option value="{{ user }}">
+                                    {{ user }}
+                                </option>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </select>
+
+                    <div class="group-hint">
+                        Hold Ctrl and click to select multiple people.
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="add-members-button"
+                    >
+                        ➕ Add Selected Members
+                    </button>
+
+                </form>
 
             {% endif %}
 
@@ -864,39 +860,32 @@
 
     </div>
 
-
-    <!-- EXIT CHAT FORM -->
+    <!-- HIDDEN EXIT CHAT -->
 
     <form
         id="exitChatForm"
         action="/exit-chat"
         method="POST"
         style="display:none;"
-    >
-    </form>
+    ></form>
 
-
-    <!-- EXIT GROUP FORM -->
+    <!-- HIDDEN EXIT GROUP -->
 
     <form
         id="exitGroupForm"
         action="/exit-group"
         method="POST"
         style="display:none;"
-    >
-    </form>
+    ></form>
 
-
-    <!-- CLEAR CHAT FORM -->
+    <!-- HIDDEN CLEAR -->
 
     <form
         id="clearChatForm"
         action="/clear-chat"
         method="POST"
         style="display:none;"
-    >
-    </form>
-
+    ></form>
 
     <!-- MESSAGES -->
 
@@ -948,7 +937,6 @@
 
     </div>
 
-
     <!-- SEND -->
 
     {% if chat_type %}
@@ -978,7 +966,6 @@
 {% endif %}
 
 </div>
-
 
 <script>
 
@@ -1011,9 +998,7 @@
             document.getElementById("dropdownMenu");
 
         if (menu) {
-
             menu.classList.toggle("show");
-
         }
     }
 
@@ -1029,15 +1014,11 @@
             document.getElementById("dropdownMenu");
 
         if (panel) {
-
             panel.classList.toggle("show");
-
         }
 
         if (menu) {
-
             menu.classList.remove("show");
-
         }
     }
 
@@ -1050,21 +1031,15 @@
             document.getElementById("dropdownMenu");
 
         if (menu) {
-
             menu.classList.remove("show");
-
         }
 
         if (confirm("Exit this chat?")) {
 
-            const form =
-                document.getElementById("exitChatForm");
+            document
+                .getElementById("exitChatForm")
+                .submit();
 
-            if (form) {
-
-                form.submit();
-
-            }
         }
     }
 
@@ -1077,21 +1052,15 @@
             document.getElementById("dropdownMenu");
 
         if (menu) {
-
             menu.classList.remove("show");
-
         }
 
         if (confirm("Are you sure you want to exit this group?")) {
 
-            const form =
-                document.getElementById("exitGroupForm");
+            document
+                .getElementById("exitGroupForm")
+                .submit();
 
-            if (form) {
-
-                form.submit();
-
-            }
         }
     }
 
@@ -1104,26 +1073,20 @@
             document.getElementById("dropdownMenu");
 
         if (menu) {
-
             menu.classList.remove("show");
-
         }
 
         if (confirm("Clear this chat?")) {
 
-            const form =
-                document.getElementById("clearChatForm");
+            document
+                .getElementById("clearChatForm")
+                .submit();
 
-            if (form) {
-
-                form.submit();
-
-            }
         }
     }
 
 
-    /* CLOSE MENU */
+    /* CLOSE THREE DOT MENU */
 
     document.addEventListener(
         "click",
@@ -1172,22 +1135,19 @@
     async function checkMessages() {
 
         if (!messagesBox) {
-
             return;
-
         }
 
         try {
 
             const response =
                 await fetch(
-                    "/messages?time=" + Date.now()
+                    "/messages?time=" +
+                    Date.now()
                 );
 
             if (!response.ok) {
-
                 return;
-
             }
 
             const messages =
