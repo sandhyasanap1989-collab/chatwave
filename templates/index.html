@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,3 +240,77 @@
 </body>
 </html>
 ```
+<!DOCTYPE html>
+                );
+
+
+
+
+            if (!response.ok) {
+                return;
+            }
+
+
+
+
+            const data =
+                await response.json();
+
+
+
+
+            displayMessages(data);
+
+
+
+
+        } catch (error) {
+
+
+            console.log(
+                "Could not load messages:",
+                error
+            );
+
+
+        }
+
+
+    }
+
+
+
+
+    /*
+       Scroll to newest message
+       when page first opens
+    */
+
+
+    messagesBox.scrollTop =
+        messagesBox.scrollHeight;
+
+
+
+
+    /*
+       Check for new messages
+       every 1 second
+    */
+
+
+    setInterval(
+        loadLatestMessages,
+        1000
+    );
+
+
+
+
+</script>
+
+
+</body>
+
+
+</html>
