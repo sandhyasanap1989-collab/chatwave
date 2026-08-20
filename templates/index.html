@@ -26,7 +26,7 @@
             background: white;
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
         }
@@ -78,7 +78,7 @@
             padding: 10px 14px;
             margin: 10px 0;
             border-radius: 14px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             word-wrap: break-word;
         }
 
@@ -92,6 +92,7 @@
         .text {
             font-size: 15px;
             color: #222;
+            white-space: pre-wrap;
         }
 
         .name-area,
@@ -135,14 +136,6 @@
             font-size: 15px;
         }
 
-        .name-area button:hover {
-            background: #15803d;
-        }
-
-        .input-area button:hover {
-            background: #1d4ed8;
-        }
-
         @media (max-width: 500px) {
             .chat-container {
                 width: 100%;
@@ -170,7 +163,6 @@
 
 <div class="chat-container">
 
-    <!-- Header -->
     <div class="header">
         <div class="avatar">💬</div>
 
@@ -180,7 +172,7 @@
         </div>
     </div>
 
-    <!-- Messages -->
+
     <div class="messages" id="messages">
 
         {% for msg in messages %}
@@ -192,7 +184,7 @@
 
     </div>
 
-    <!-- Name form -->
+
     {% if not session.get("name") %}
 
     <form class="name-area" action="/set-name" method="POST">
@@ -211,7 +203,6 @@
 
     {% else %}
 
-    <!-- Message form -->
     <form class="input-area" action="/send" method="POST">
 
         <input
@@ -230,87 +221,73 @@
 
 </div>
 
+
 <script>
-    const messages = document.getElementById("messages");
+    const messagesBox = document.getElementById("messages");
 
-    // Automatically scroll to the newest message
-    messages.scrollTop = messages.scrollHeight;
-</script>
+    function scrollToBottom() {
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
 
-</body>
-</html>
-```
-<!DOCTYPE html>
-                );
-
-
-
+    async function checkMessages() {
+        try {
+            const response = await fetch("/messages?time=" + Date.now());
 
             if (!response.ok) {
                 return;
             }
 
+            const messages = await response.json();
+
+            const currentCount =
+                messagesBox.querySelectorAll(".message").length;
+
+            if (messages.length !== currentCount) {
+
+                messagesBox.innerHTML = "";
+
+                messages.forEach(function(msg) {
+
+                    const messageDiv =
+                        document.createElement("div");
+
+                    messageDiv.className = "message";
 
 
+                    const nameDiv =
+                        document.createElement("div");
 
-            const data =
-                await response.json();
+                    nameDiv.className = "name";
 
-
-
-
-            displayMessages(data);
+                    nameDiv.textContent = msg.name;
 
 
+                    const textDiv =
+                        document.createElement("div");
 
+                    textDiv.className = "text";
+
+                    textDiv.textContent = msg.message;
+
+
+                    messageDiv.appendChild(nameDiv);
+                    messageDiv.appendChild(textDiv);
+
+                    messagesBox.appendChild(messageDiv);
+                });
+
+                scrollToBottom();
+            }
 
         } catch (error) {
-
-
-            console.log(
-                "Could not load messages:",
-                error
-            );
-
-
+            console.log("Message check error:", error);
         }
-
-
     }
 
+    scrollToBottom();
 
-
-
-    /*
-       Scroll to newest message
-       when page first opens
-    */
-
-
-    messagesBox.scrollTop =
-        messagesBox.scrollHeight;
-
-
-
-
-    /*
-       Check for new messages
-       every 1 second
-    */
-
-
-    setInterval(
-        loadLatestMessages,
-        1000
-    );
-
-
-
-
+    setInterval(checkMessages, 1000);
 </script>
 
-
 </body>
-
-
 </html>
