@@ -1,24 +1,44 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
+app.secret_key = "my_secret_key"
 
-messages = []
 
 @app.route("/")
 def home():
-    return render_template("index.html", messages=messages)
+    name = session.get("name")
+    messages = session.get("messages", [])
+    return render_template("index.html", name=name, messages=messages)
+
+
+@app.route("/set-name", methods=["POST"])
+def set_name():
+    name = request.form.get("name")
+
+    if name:
+        session["name"] = name
+
+    return redirect("/")
+
 
 @app.route("/send", methods=["POST"])
 def send():
-    name = request.form["name"]
-    message = request.form["message"]
+    message = request.form.get("message")
 
-    if name and message:
+    if message:
+        messages = session.get("messages", [])
         messages.append({
-            "name": name,
+            "name": session.get("name", "User"),
             "message": message
         })
+        session["messages"] = messages
 
+    return redirect("/")
+
+
+@app.route("/clear")
+def clear():
+    session.pop("messages", None)
     return redirect("/")
 
 

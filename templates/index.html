@@ -2,305 +2,199 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <!-- Important for mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ChatWave</title>
+    <title>My Chat Website</title>
 
     <style>
         * {
             box-sizing: border-box;
         }
 
-        html, body {
+        body {
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
             font-family: Arial, sans-serif;
-            background: #e9eef5;
+            background: #f2f2f2;
         }
 
-        .chat-container {
+        .container {
             width: 100%;
-            max-width: 500px;
-            height: 100vh;
-            height: 100dvh;
-            margin: 0 auto;
+            max-width: 600px;
+            margin: 50px auto;
             background: white;
-            display: flex;
-            flex-direction: column;
+            min-height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             overflow: hidden;
         }
 
-        /* HEADER */
         .header {
-            background: #2563eb;
+            background: #2196f3;
             color: white;
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
+            padding: 20px;
+            text-align: center;
         }
 
-        .avatar {
-            width: 42px;
-            height: 42px;
-            min-width: 42px;
-            border-radius: 50%;
-            background: white;
-            color: #2563eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .header h2 {
+        .header h1 {
             margin: 0;
-            font-size: 19px;
         }
 
-        .online {
-            font-size: 12px;
-            margin-top: 2px;
+        .name-area {
+            padding: 30px;
+            text-align: center;
         }
 
-        /* MESSAGES */
-        .messages {
-            flex: 1;
+        .name-area input,
+        .input-area input {
+            width: 75%;
             padding: 12px;
-            overflow-y: auto;
-            background: #f7f9fc;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            background: #2196f3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1976d2;
+        }
+
+        .welcome {
+            padding: 15px;
+            text-align: center;
+            background: #e3f2fd;
+        }
+
+        .messages {
+            padding: 20px;
+            min-height: 300px;
         }
 
         .message {
-            width: fit-content;
-            max-width: 85%;
-            background: white;
-            padding: 9px 12px;
-            margin: 8px 0;
-            border-radius: 13px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .name {
-            font-size: 12px;
-            font-weight: bold;
-            color: #2563eb;
-            margin-bottom: 3px;
-        }
-
-        .text {
-            font-size: 15px;
-            color: #222;
-        }
-
-        /* NAME FORM */
-        .name-area {
+            background: #eeeeee;
             padding: 10px;
-            border-top: 1px solid #ddd;
-            display: flex;
-            gap: 7px;
-            background: white;
-            flex-shrink: 0;
+            margin-bottom: 10px;
+            border-radius: 8px;
         }
 
-        .name-area input {
-            min-width: 0;
-            flex: 1;
-            padding: 11px 13px;
-            border: 1px solid #ddd;
-            border-radius: 22px;
-            outline: none;
-            font-size: 16px;
+        .message strong {
+            color: #2196f3;
         }
 
-        .name-area button {
-            border: none;
-            background: #16a34a;
-            color: white;
-            padding: 0 16px;
-            border-radius: 22px;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        /* MESSAGE FORM */
         .input-area {
-            padding: 10px;
-            border-top: 1px solid #ddd;
             display: flex;
-            gap: 7px;
-            background: white;
-            flex-shrink: 0;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #ddd;
         }
 
         .input-area input {
-            min-width: 0;
             flex: 1;
-            padding: 11px 13px;
-            border: 1px solid #ddd;
-            border-radius: 22px;
-            outline: none;
-            font-size: 16px;
+            width: auto;
         }
 
-        .input-area button {
-            border: none;
-            background: #2563eb;
-            color: white;
-            padding: 0 17px;
-            border-radius: 22px;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .input-area button:hover {
-            background: #1d4ed8;
-        }
-
-        /* MOBILE */
-        @media (max-width: 500px) {
-
-            .chat-container {
-                width: 100%;
-                max-width: none;
-                margin: 0;
-                border-radius: 0;
-            }
-
-            .header {
-                padding: 12px;
-            }
-
-            .messages {
-                padding: 10px;
-            }
-
-            .message {
-                max-width: 85%;
-            }
-
-            .name-area,
-            .input-area {
-                padding: 8px;
-            }
-
-            .name-area input,
-            .input-area input {
-                font-size: 16px;
-            }
-
-            .name-area button,
-            .input-area button {
-                padding: 0 14px;
-            }
+        .clear {
+            display: block;
+            text-align: center;
+            margin: 10px;
+            color: red;
+            text-decoration: none;
         }
     </style>
 </head>
 
 <body>
 
-<div class="chat-container">
+<div class="container">
 
-    <!-- HEADER -->
     <div class="header">
-
-        <div class="avatar">💬</div>
-
-        <div>
-            <h2>ChatWave</h2>
-            <div class="online">🟢 Online</div>
-        </div>
-
+        <h1>💬 My Chat Website</h1>
     </div>
 
 
-    <!-- MESSAGES -->
-    <div class="messages" id="messages">
+    {% if not name %}
 
-        {% for msg in messages %}
+        <form class="name-area" action="/set-name" method="POST">
 
-        <div class="message">
+            <h2>Enter Your Name</h2>
 
-            <div class="name">
-                {{ msg.name }}
-            </div>
+            <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                required
+            >
 
-            <div class="text">
-                {{ msg.message }}
-            </div>
+            <br><br>
 
-        </div>
+            <button type="submit">
+                Save
+            </button>
 
-        {% endfor %}
-
-    </div>
-
-
-    <!-- NAME / MESSAGE FORM -->
-
-    {% if not session.get("name") %}
-
-    <!-- Show this only when the user has not saved a name -->
-
-    <form class="name-area" action="/set-name" method="POST">
-
-        <input
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            required
-            autocomplete="off"
-        >
-
-        <button type="submit">
-            Save
-        </button>
-
-    </form>
+        </form>
 
     {% else %}
 
-    <!-- After saving the name, show only the message box -->
+        <div class="welcome">
+            <h2>Welcome, {{ name }}! 👋</h2>
+        </div>
 
-    <form class="input-area" action="/send" method="POST">
 
-        <input
-            type="text"
-            name="message"
-            placeholder="Type a message..."
-            required
-            autocomplete="off"
-        >
+        <div class="messages">
 
-        <button type="submit">
-            Send
-        </button>
+            {% if messages %}
 
-    </form>
+                {% for msg in messages %}
+
+                    <div class="message">
+                        <strong>{{ msg.name }}:</strong>
+                        {{ msg.message }}
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p style="text-align:center;">
+                    No messages yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <form class="input-area" action="/send" method="POST">
+
+            <input
+                type="text"
+                name="message"
+                placeholder="Type your message..."
+                required
+            >
+
+            <button type="submit">
+                Send
+            </button>
+
+        </form>
+
+
+        <a class="clear" href="/clear">
+            Clear Messages
+        </a>
 
     {% endif %}
 
-
 </div>
-
-
-<script>
-    // Automatically scroll to the newest message
-    const messages = document.getElementById("messages");
-
-    if (messages) {
-        messages.scrollTop = messages.scrollHeight;
-    }
-</script>
 
 </body>
 </html>
