@@ -31,10 +31,69 @@
             flex-direction: column;
         }
 
+        /* LOGIN / REGISTER */
+
+        .auth-container {
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .auth-container input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .register-button {
+            background: #16a34a !important;
+        }
+
+        .divider {
+            text-align: center;
+            color: #999;
+            margin: 12px 0;
+        }
+
+        /* HEADER */
+
         .header {
             background: #2563eb;
             color: white;
-            padding: 16px;
+            padding: 14px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -53,9 +112,13 @@
             font-size: 22px;
         }
 
+        .header-info {
+            flex: 1;
+        }
+
         .header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .online {
@@ -64,11 +127,65 @@
             opacity: 0.9;
         }
 
+        .logout {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            background: rgba(255,255,255,0.2);
+            padding: 7px 10px;
+            border-radius: 8px;
+        }
+
+        /* USER SELECT */
+
+        .user-select {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .user-select form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .user-select select {
+            flex: 1;
+            min-width: 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .user-select button {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 0 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* MESSAGES */
+
         .messages {
             flex: 1;
             padding: 15px;
             overflow-y: auto;
             background: #f7f9fc;
+        }
+
+        .no-chat {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #777;
+            padding: 20px;
         }
 
         .message {
@@ -80,6 +197,11 @@
             border-radius: 14px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.08);
             word-wrap: break-word;
+        }
+
+        .my-message {
+            margin-left: auto;
+            background: #dbeafe;
         }
 
         .name {
@@ -95,7 +217,8 @@
             white-space: pre-wrap;
         }
 
-        .name-area,
+        /* INPUT */
+
         .input-area {
             padding: 10px;
             border-top: 1px solid #ddd;
@@ -105,7 +228,6 @@
             flex-shrink: 0;
         }
 
-        .name-area input,
         .input-area input {
             flex: 1;
             min-width: 0;
@@ -114,16 +236,6 @@
             border-radius: 25px;
             outline: none;
             font-size: 15px;
-        }
-
-        .name-area button {
-            border: none;
-            background: #16a34a;
-            color: white;
-            padding: 0 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
         }
 
         .input-area button {
@@ -136,6 +248,13 @@
             font-size: 15px;
         }
 
+        .empty-users {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            padding: 8px;
+        }
+
         @media (max-width: 500px) {
             .chat-container {
                 width: 100%;
@@ -145,7 +264,7 @@
             }
 
             .header {
-                padding: 14px;
+                padding: 12px;
             }
 
             .messages {
@@ -155,6 +274,10 @@
             .message {
                 max-width: 85%;
             }
+
+            .auth-container {
+                padding: 25px;
+            }
         }
     </style>
 </head>
@@ -163,47 +286,230 @@
 
 <div class="chat-container">
 
-    <div class="header">
-        <div class="avatar">💬</div>
+{% if not logged_in %}
 
-        <div>
-            <h2>ChatWave</h2>
-            <div class="online">🟢 Online</div>
+    <!-- ========================= -->
+    <!-- LOGIN / REGISTER -->
+    <!-- ========================= -->
+
+    <div class="auth-container">
+
+        <div class="logo">💬 ChatWave</div>
+
+        <div class="subtitle">
+            Private messaging made simple
         </div>
+
+        <!-- LOGIN -->
+
+        <form action="/login" method="POST">
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                required
+                autocomplete="username"
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+                autocomplete="current-password"
+            >
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <div class="divider">
+            New to ChatWave?
+        </div>
+
+        <!-- REGISTER -->
+
+        <form action="/register" method="POST">
+
+            <input
+                type="text"
+                name="username"
+                placeholder="Choose a username"
+                required
+                autocomplete="username"
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Create password (6+ characters)"
+                required
+                minlength="6"
+                autocomplete="new-password"
+            >
+
+            <button
+                type="submit"
+                class="register-button"
+            >
+                Create Account
+            </button>
+
+        </form>
+
     </div>
 
+{% else %}
+
+    <!-- ========================= -->
+    <!-- CHAT -->
+    <!-- ========================= -->
+
+    <div class="header">
+
+        <div class="avatar">
+            💬
+        </div>
+
+        <div class="header-info">
+
+            <h2>
+                {% if chat_with %}
+                    {{ chat_with }}
+                {% else %}
+                    ChatWave
+                {% endif %}
+            </h2>
+
+            <div class="online">
+                🟢 Logged in as {{ username }}
+            </div>
+
+        </div>
+
+        <a
+            href="/logout"
+            class="logout"
+        >
+            Logout
+        </a>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- SELECT USER -->
+    <!-- ========================= -->
+
+    <div class="user-select">
+
+        {% if users %}
+
+        <form action="/set-chat" method="POST">
+
+            <select name="chat_with" required>
+
+                <option value="" disabled
+                    {% if not chat_with %}selected{% endif %}>
+                    Select a person to chat
+                </option>
+
+                {% for user in users %}
+
+                <option
+                    value="{{ user }}"
+                    {% if chat_with == user %}selected{% endif %}
+                >
+                    {{ user }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">
+                Chat
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <div class="empty-users">
+            No other users yet.
+            Ask someone to create a ChatWave account.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- MESSAGES -->
+    <!-- ========================= -->
 
     <div class="messages" id="messages">
 
-        {% for msg in messages %}
-        <div class="message">
-            <div class="name">{{ msg.name }}</div>
-            <div class="text">{{ msg.message }}</div>
-        </div>
-        {% endfor %}
+        {% if chat_with %}
+
+            {% if messages %}
+
+                {% for msg in messages %}
+
+                <div
+                    class="message
+                    {% if msg.sender == username %}
+                    my-message
+                    {% endif %}"
+                >
+
+                    <div class="name">
+                        {{ msg.sender }}
+                    </div>
+
+                    <div class="text">
+                        {{ msg.message }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="no-chat">
+                    No messages yet.<br>
+                    Say hello! 👋
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="no-chat">
+                Select a person above to start chatting. 💬
+            </div>
+
+        {% endif %}
 
     </div>
 
 
-    {% if not session.get("name") %}
+    <!-- ========================= -->
+    <!-- MESSAGE INPUT -->
+    <!-- ========================= -->
 
-    <form class="name-area" action="/set-name" method="POST">
+    {% if chat_with %}
 
-        <input
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            required
-            autocomplete="name"
-        >
-
-        <button type="submit">Save</button>
-
-    </form>
-
-    {% else %}
-
-    <form class="input-area" action="/send" method="POST">
+    <form
+        class="input-area"
+        action="/send"
+        method="POST"
+    >
 
         <input
             type="text"
@@ -213,36 +519,63 @@
             autocomplete="off"
         >
 
-        <button type="submit">Send</button>
+        <button type="submit">
+            Send
+        </button>
 
     </form>
 
     {% endif %}
 
+{% endif %}
+
 </div>
 
 
 <script>
-    const messagesBox = document.getElementById("messages");
+
+    const messagesBox =
+        document.getElementById("messages");
 
     function scrollToBottom() {
-        messagesBox.scrollTop = messagesBox.scrollHeight;
+
+        if (messagesBox) {
+            messagesBox.scrollTop =
+                messagesBox.scrollHeight;
+        }
+
     }
 
+
     async function checkMessages() {
+
+        if (!messagesBox) {
+            return;
+        }
+
         try {
-            const response = await fetch("/messages?time=" + Date.now());
+
+            const response =
+                await fetch(
+                    "/messages?time=" + Date.now()
+                );
 
             if (!response.ok) {
                 return;
             }
 
-            const messages = await response.json();
+            const messages =
+                await response.json();
 
-            const currentCount =
-                messagesBox.querySelectorAll(".message").length;
+            const currentMessages =
+                messagesBox.querySelectorAll(
+                    ".message"
+                );
 
-            if (messages.length !== currentCount) {
+            if (
+                messages.length !==
+                currentMessages.length
+            ) {
 
                 messagesBox.innerHTML = "";
 
@@ -251,42 +584,82 @@
                     const messageDiv =
                         document.createElement("div");
 
-                    messageDiv.className = "message";
+                    messageDiv.className =
+                        "message";
+
+
+                    const currentUser =
+                        "{{ username }}";
+
+
+                    if (
+                        msg.sender ===
+                        currentUser
+                    ) {
+
+                        messageDiv.classList.add(
+                            "my-message"
+                        );
+
+                    }
 
 
                     const nameDiv =
                         document.createElement("div");
 
-                    nameDiv.className = "name";
+                    nameDiv.className =
+                        "name";
 
-                    nameDiv.textContent = msg.name;
+                    nameDiv.textContent =
+                        msg.sender;
 
 
                     const textDiv =
                         document.createElement("div");
 
-                    textDiv.className = "text";
+                    textDiv.className =
+                        "text";
 
-                    textDiv.textContent = msg.message;
+                    textDiv.textContent =
+                        msg.message;
 
 
-                    messageDiv.appendChild(nameDiv);
-                    messageDiv.appendChild(textDiv);
+                    messageDiv.appendChild(
+                        nameDiv
+                    );
 
-                    messagesBox.appendChild(messageDiv);
+                    messageDiv.appendChild(
+                        textDiv
+                    );
+
+                    messagesBox.appendChild(
+                        messageDiv
+                    );
+
                 });
 
                 scrollToBottom();
             }
 
         } catch (error) {
-            console.log("Message check error:", error);
+
+            console.log(
+                "Message check error:",
+                error
+            );
+
         }
+
     }
+
 
     scrollToBottom();
 
-    setInterval(checkMessages, 1000);
+    setInterval(
+        checkMessages,
+        1000
+    );
+
 </script>
 
 </body>
