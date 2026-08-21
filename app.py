@@ -12,6 +12,10 @@ MESSAGES_FILE = "messages.json"
 GROUPS_FILE = "groups.json"
 
 
+# =========================
+# JSON FUNCTIONS
+# =========================
+
 def load_json(filename, default):
     if not os.path.exists(filename):
         return default
@@ -60,7 +64,10 @@ def save_groups(groups):
 def home():
 
     if "username" not in session:
-        return render_template("index.html", logged_in=False)
+        return render_template(
+            "index.html",
+            logged_in=False
+        )
 
     username = session["username"]
 
@@ -68,11 +75,13 @@ def home():
     groups = load_groups()
     messages = load_messages()
 
+    # All users except current user
     other_users = [
         user for user in users
         if user != username
     ]
 
+    # Groups where current user is a member
     user_groups = []
 
     for group_id, group in groups.items():
@@ -92,7 +101,10 @@ def home():
 
     visible_messages = []
 
+    # =========================
     # PRIVATE CHAT
+    # =========================
+
     if chat_type == "private" and chat_with:
 
         for msg in messages:
@@ -110,7 +122,10 @@ def home():
             ):
                 visible_messages.append(msg)
 
+    # =========================
     # GROUP CHAT
+    # =========================
+
     elif chat_type == "group" and group_id:
 
         group = groups.get(group_id)
@@ -121,7 +136,7 @@ def home():
 
                 if (
                     msg.get("type") == "group"
-                    and msg.get("group_id") == group_id
+                    and str(msg.get("group_id")) == str(group_id)
                 ):
                     visible_messages.append(msg)
 
@@ -171,11 +186,10 @@ def register():
 
     save_users(users)
 
+    session.clear()
+
     session["username"] = username
     session["chat_type"] = None
-
-    session.pop("chat_with", None)
-    session.pop("group_id", None)
 
     return redirect("/")
 
@@ -197,14 +211,21 @@ def login():
 
     stored_password = users[username].get("password", "")
 
-    if not check_password_hash(stored_password, password):
+    try:
+        valid_password = check_password_hash(
+            stored_password,
+            password
+        )
+    except:
+        valid_password = False
+
+    if not valid_password:
         return "Invalid username or password."
+
+    session.clear()
 
     session["username"] = username
     session["chat_type"] = None
-
-    session.pop("chat_with", None)
-    session.pop("group_id", None)
 
     return redirect("/")
 
@@ -236,12 +257,16 @@ def set_chat():
 
     users = load_users()
 
-    if chat_with in users and chat_with != username:
+    if chat_with not in users:
+        return redirect("/")
 
-        session["chat_type"] = "private"
-        session["chat_with"] = chat_with
+    if chat_with == username:
+        return redirect("/")
 
-        session.pop("group_id", None)
+    session["chat_type"] = "private"
+    session["chat_with"] = chat_with
+
+    session.pop("group_id", None)
 
     return redirect("/")
 
@@ -258,7 +283,6 @@ def exit_chat():
 
     session["chat_type"] = None
     session.pop("chat_with", None)
-    session.pop("group_id", None)
 
     return redirect("/")
 
@@ -275,7 +299,10 @@ def create_group():
 
     username = session["username"]
 
-    group_name = request.form.get("group_name", "").strip()
+    group_name = request.form.get(
+        "group_name",
+        ""
+    ).strip()
 
     if not group_name:
         return redirect("/")
@@ -287,7 +314,9 @@ def create_group():
     groups[group_id] = {
         "name": group_name,
         "creator": username,
-        "members": [username]
+        "members": [
+            username
+        ]
     }
 
     save_groups(groups)
@@ -311,7 +340,11 @@ def set_group():
         return redirect("/")
 
     username = session["username"]
-    group_id = request.form.get("group_id", "")
+
+    group_id = request.form.get(
+        "group_id",
+        ""
+    )
 
     groups = load_groups()
 
@@ -343,10 +376,24 @@ def add_member():
 
     username = session["username"]
 
-    group_id = request.form.get("group_id", "").strip()
+    group_id = request.form.get(
+        "group_id",
+        ""
+    )
 
-    # Get multiple selected users
-    new_members = request.form.getlist("members")
+    # Supports multiple values:
+    # name="members"
+    members = request.form.getlist("members")
+
+    # Also supports old HTML:
+    # name="member"
+    old_member = request.form.get(
+        "member",
+        ""
+    ).strip()
+
+    if old_member:
+        members.append(old_member)
 
     groups = load_groups()
     users = load_users()
@@ -356,19 +403,28 @@ def add_member():
     if not group:
         return redirect("/")
 
-    # Only creator can add members
+    # Only host/creator can add members
     if group.get("creator") != username:
         return redirect("/")
 
     # Add every selected member
-    for new_member in new_members:
+    for new_member in members:
 
         new_member = new_member.strip()
 
-        if new_member in users and new_member not in group["members"]:
+        if not new_member:
+            continue
+
+        if new_member not in users:
+            continue
+
+        if new_member not in group["members"]:
             group["members"].append(new_member)
 
     save_groups(groups)
+
+    session["chat_type"] = "group"
+    session["group_id"] = group_id
 
     return redirect("/")
 
@@ -386,6 +442,9 @@ def exit_group():
     username = session["username"]
     group_id = session.get("group_id")
 
+    if not group_id:
+        return redirect("/")
+
     groups = load_groups()
 
     group = groups.get(group_id)
@@ -395,12 +454,14 @@ def exit_group():
         session.pop("group_id", None)
         return redirect("/")
 
-    # Remove current user
-    if username in group.get("members", []):
-        group["members"].remove(username)
-
-    # If creator exits, delete the group
+    # Host cannot leave while group still exists
+    # Instead, host can remove/delete the group.
     if group.get("creator") == username:
+
+        # Delete the group
+        del groups[group_id]
+
+        save_groups(groups)
 
         # Remove group messages
         messages = load_messages()
@@ -409,21 +470,22 @@ def exit_group():
             msg for msg in messages
             if not (
                 msg.get("type") == "group"
-                and msg.get("group_id") == group_id
+                and str(msg.get("group_id")) == str(group_id)
             )
         ]
 
         save_messages(messages)
 
-        del groups[group_id]
-
     else:
+
+        # Normal member leaves
+        if username in group.get("members", []):
+            group["members"].remove(username)
 
         save_groups(groups)
 
     session["chat_type"] = None
     session.pop("group_id", None)
-    session.pop("chat_with", None)
 
     return redirect("/")
 
@@ -439,7 +501,11 @@ def send():
         return redirect("/")
 
     sender = session["username"]
-    message = request.form.get("message", "").strip()
+
+    message = request.form.get(
+        "message",
+        ""
+    ).strip()
 
     if not message:
         return redirect("/")
@@ -448,7 +514,10 @@ def send():
 
     chat_type = session.get("chat_type")
 
-    # PRIVATE
+    # =========================
+    # PRIVATE MESSAGE
+    # =========================
+
     if chat_type == "private":
 
         receiver = session.get("chat_with")
@@ -469,17 +538,26 @@ def send():
             "message": message
         })
 
-    # GROUP
+    # =========================
+    # GROUP MESSAGE
+    # =========================
+
     elif chat_type == "group":
 
         group_id = session.get("group_id")
 
+        if not group_id:
+            return redirect("/")
+
         groups = load_groups()
+
         group = groups.get(group_id)
 
         if not group:
             return redirect("/")
 
+        # IMPORTANT:
+        # Host AND every group member can send
         if sender not in group.get("members", []):
             return redirect("/")
 
@@ -510,13 +588,17 @@ def get_messages():
         return jsonify([])
 
     username = session["username"]
+
     chat_type = session.get("chat_type")
 
     messages = load_messages()
 
     result = []
 
+    # =========================
     # PRIVATE
+    # =========================
+
     if chat_type == "private":
 
         chat_with = session.get("chat_with")
@@ -533,32 +615,43 @@ def get_messages():
             receiver = msg.get("receiver")
 
             if (
-                sender == username and receiver == chat_with
+                sender == username
+                and receiver == chat_with
             ) or (
-                sender == chat_with and receiver == username
+                sender == chat_with
+                and receiver == username
             ):
+
                 result.append(msg)
 
+    # =========================
     # GROUP
+    # =========================
+
     elif chat_type == "group":
 
         group_id = session.get("group_id")
 
+        if not group_id:
+            return jsonify([])
+
         groups = load_groups()
+
         group = groups.get(group_id)
 
         if not group:
             return jsonify([])
 
+        # Only group members can receive
         if username not in group.get("members", []):
             return jsonify([])
 
         for msg in messages:
 
-            if (
-                msg.get("type") == "group"
-                and msg.get("group_id") == group_id
-            ):
+            if msg.get("type") != "group":
+                continue
+
+            if str(msg.get("group_id")) == str(group_id):
                 result.append(msg)
 
     return jsonify(result)
@@ -575,11 +668,15 @@ def clear_chat():
         return redirect("/")
 
     username = session["username"]
+
     chat_type = session.get("chat_type")
 
     messages = load_messages()
 
+    # =========================
     # PRIVATE CHAT
+    # =========================
+
     if chat_type == "private":
 
         chat_with = session.get("chat_with")
@@ -594,35 +691,40 @@ def clear_chat():
             if msg.get("type") != "private":
 
                 new_messages.append(msg)
-
                 continue
 
             sender = msg.get("sender")
             receiver = msg.get("receiver")
 
-            this_chat = (
-                sender == username and receiver == chat_with
+            current_chat = (
+                sender == username
+                and receiver == chat_with
             ) or (
-                sender == chat_with and receiver == username
+                sender == chat_with
+                and receiver == username
             )
 
-            if not this_chat:
+            if not current_chat:
                 new_messages.append(msg)
 
         save_messages(new_messages)
 
+    # =========================
     # GROUP CHAT
+    # =========================
+
     elif chat_type == "group":
 
         group_id = session.get("group_id")
 
         groups = load_groups()
+
         group = groups.get(group_id)
 
         if not group:
             return redirect("/")
 
-        # Only creator can clear
+        # Only host can clear group chat
         if group.get("creator") != username:
             return redirect("/")
 
@@ -632,8 +734,9 @@ def clear_chat():
 
             if not (
                 msg.get("type") == "group"
-                and msg.get("group_id") == group_id
+                and str(msg.get("group_id")) == str(group_id)
             ):
+
                 new_messages.append(msg)
 
         save_messages(new_messages)
@@ -646,4 +749,8 @@ def clear_chat():
 # =========================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        debug=True,
+        host="0.0.0.0",
+        port=5000
+    )

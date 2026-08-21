@@ -1,429 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ChatWave</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
 
-        html, body {
+        body {
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
             font-family: Arial, sans-serif;
-            background: #e9eef5;
-        }
-
-        .chat-container {
-            width: 450px;
-            height: 90vh;
-            margin: 5vh auto;
-            background: white;
-            border-radius: 18px;
+            background: #efeae2;
+            height: 100vh;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 310px;
+            background: white;
+            border-right: 1px solid #ddd;
             display: flex;
             flex-direction: column;
         }
 
-        /* LOGIN */
-
-        .auth-container {
-            width: 100%;
-            height: 100%;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .header {
+            background: #075e54;
+            color: white;
+            padding: 18px;
         }
 
         .logo {
-            text-align: center;
-            font-size: 32px;
+            font-size: 24px;
             font-weight: bold;
-            color: #2563eb;
-            margin-bottom: 8px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #777;
-            margin-bottom: 25px;
+        .username {
+            margin-top: 7px;
+            font-size: 14px;
         }
 
-        .auth-container input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            outline: none;
-            font-size: 15px;
+        .section-title {
+            padding: 14px;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 1px solid #eee;
         }
 
-        .password-box {
-            position: relative;
+        .list {
+            overflow-y: auto;
+            max-height: 35vh;
         }
 
-        .password-box input {
-            padding-right: 40px;
-        }
 
-        .show-password {
-            position: absolute;
-            right: 6px;
-            top: 5px;
-            width: auto !important;
-            border: none !important;
-            background: transparent !important;
-            color: #555 !important;
-            padding: 5px !important;
-            margin: 0 !important;
-            font-size: 16px !important;
+        /* =========================
+           USERS
+        ========================= */
+
+        .user {
+            padding: 13px 15px;
+            border-bottom: 1px solid #eee;
             cursor: pointer;
         }
 
-        .auth-container > form > button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-            margin-bottom: 10px;
+        .user:hover {
+            background: #f5f5f5;
         }
 
-        .register-button {
-            background: #16a34a !important;
-        }
-
-        .divider {
-            text-align: center;
-            color: #999;
-            margin: 10px 0;
-        }
-
-        /* HEADER */
-
-        .header {
-            background: #2563eb;
-            color: white;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-
-        .avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: white;
-            color: #2563eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .header-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .header h2 {
+        .user-form {
             margin: 0;
-            font-size: 20px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .online {
-            font-size: 12px;
-            margin-top: 3px;
-            opacity: 0.9;
-        }
-
-        /* THREE DOTS */
-
-        .menu-container {
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .menu-button {
+        .user-button {
+            width: 100%;
             border: none;
             background: transparent;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            padding: 2px 7px;
-            line-height: 1;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 42px;
-            width: 190px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-            overflow: hidden;
-            z-index: 1000;
-        }
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
-        .dropdown-menu button {
-            width: 100%;
-            border: none;
-            background: white;
-            color: #222;
-            padding: 13px;
             text-align: left;
-            font-size: 14px;
+            padding: 0;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           GROUPS
+        ========================= */
+
+        .group {
+            padding: 14px 15px;
+            border-bottom: 1px solid #eee;
             cursor: pointer;
         }
 
-        .dropdown-menu button:hover {
-            background: #f1f5f9;
+        .group:hover {
+            background: #f5f5f5;
         }
 
-        .dropdown-menu .danger {
-            color: #dc2626;
+        .group.active {
+            background: #d9fdd3;
         }
 
-        /* PRIVATE CHAT */
-
-        .chat-selection {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            background: white;
-            flex-shrink: 0;
-        }
-
-        .selection-title {
-            font-size: 11px;
+        .group-name {
             font-weight: bold;
-            color: #777;
-            margin-bottom: 5px;
         }
 
-        .selection-form {
-            display: flex;
-            gap: 7px;
-            margin-bottom: 8px;
-        }
-
-        .selection-form select {
-            flex: 1;
-            min-width: 0;
-            padding: 9px;
-            border: 1px solid #ddd;
-            border-radius: 9px;
-            background: white;
-        }
-
-        .selection-form button {
-            border: none;
-            background: #2563eb;
-            color: white;
-            padding: 0 12px;
-            border-radius: 9px;
-            cursor: pointer;
-        }
-
-        /* GROUP PANEL */
-
-        .group-panel {
-            display: none;
-            padding: 10px;
-            background: white;
-            border-bottom: 1px solid #ddd;
-            flex-shrink: 0;
-        }
-
-        .group-panel.show {
-            display: block;
-        }
-
-        .group-title {
+        .group-creator {
             font-size: 11px;
-            font-weight: bold;
             color: #777;
+            margin-top: 3px;
+        }
+
+
+        /* =========================
+           GROUP CONTROLS
+        ========================= */
+
+        .controls {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .controls form {
             margin-bottom: 7px;
         }
 
-        .create-group-form {
+        .controls input,
+        .controls select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 6px;
+        }
+
+        .controls button {
+            width: 100%;
+            padding: 9px;
+            border: none;
+            border-radius: 5px;
+            background: #075e54;
+            color: white;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background: #064c44;
+        }
+
+        .logout {
+            background: #c62828 !important;
+        }
+
+
+        /* =========================
+           CHAT
+        ========================= */
+
+        .chat {
+            flex: 1;
             display: flex;
-            gap: 7px;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .chat-header {
+            height: 65px;
+            background: #075e54;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .chat-title {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #efeae2;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
             margin-bottom: 10px;
         }
 
-        .create-group-form input {
-            flex: 1;
-            min-width: 0;
-            padding: 9px;
-            border: 1px solid #ddd;
-            border-radius: 9px;
-            outline: none;
+        .message-row.mine {
+            justify-content: flex-end;
         }
 
-        .create-group-form button {
-            border: none;
-            background: #16a34a;
-            color: white;
-            padding: 0 12px;
-            border-radius: 9px;
-            cursor: pointer;
-        }
-
-        /* ADD MEMBERS */
-
-        .group-members-select {
-            width: 100%;
-            min-height: 120px;
-            border: 1px solid #ddd;
-            border-radius: 9px;
-            padding: 6px;
-            background: white;
-            font-size: 14px;
-        }
-
-        .group-members-select option {
-            padding: 8px;
-        }
-
-        .add-members-button {
-            width: 100%;
-            margin-top: 7px;
-            border: none;
-            background: #7c3aed;
-            color: white;
-            padding: 10px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .add-members-button:hover {
-            background: #6d28d9;
-        }
-
-        .group-hint {
-            font-size: 11px;
-            color: #777;
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-
-        /* MESSAGES */
-
-        .messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #f7f9fc;
+        .message-row.other {
+            justify-content: flex-start;
         }
 
         .message {
-            width: fit-content;
-            max-width: 80%;
-            background: white;
-            padding: 10px 14px;
-            margin: 10px 0;
-            border-radius: 14px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.12);
             word-wrap: break-word;
         }
 
-        .my-message {
-            margin-left: auto;
-            background: #dbeafe;
+        .mine .message {
+            background: #d9fdd3;
         }
 
-        .name {
+        .other .message {
+            background: white;
+        }
+
+        .sender {
+            color: #075e54;
             font-size: 12px;
             font-weight: bold;
-            color: #2563eb;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
-        .text {
+        .message-text {
             font-size: 15px;
-            color: #222;
             white-space: pre-wrap;
         }
 
-        .no-chat {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .time {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .empty {
             text-align: center;
             color: #777;
+            padding: 40px 10px;
         }
 
-        /* INPUT */
 
-        .input-area {
-            padding: 10px;
-            border-top: 1px solid #ddd;
+        /* =========================
+           SEND
+        ========================= */
+
+        .send-area {
             display: flex;
-            gap: 8px;
-            background: white;
-            flex-shrink: 0;
+            gap: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
         }
 
-        .input-area input {
+        #messageInput {
             flex: 1;
-            min-width: 0;
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 13px 17px;
+            border: 1px solid #ccc;
             border-radius: 25px;
             outline: none;
             font-size: 15px;
         }
 
-        .input-area button {
+        #sendButton {
+            width: 50px;
+            height: 50px;
             border: none;
-            background: #2563eb;
+            border-radius: 50%;
+            background: #075e54;
             color: white;
-            padding: 0 18px;
-            border-radius: 25px;
+            font-size: 20px;
             cursor: pointer;
         }
 
-        /* MOBILE */
+        #sendButton:hover {
+            background: #064c44;
+        }
 
-        @media (max-width: 500px) {
 
-            .chat-container {
-                width: 100%;
-                height: 100dvh;
-                margin: 0;
-                border-radius: 0;
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 105px;
             }
 
-            .header {
-                padding: 14px;
+            .logo {
+                font-size: 17px;
             }
 
-            .messages {
+            .username {
+                font-size: 10px;
+                word-break: break-word;
+            }
+
+            .section-title {
+                font-size: 11px;
+                padding: 9px 6px;
+            }
+
+            .user,
+            .group {
+                padding: 11px 6px;
+                font-size: 12px;
+                word-break: break-word;
+            }
+
+            .group-creator {
+                display: none;
+            }
+
+            .controls {
+                padding: 5px;
+            }
+
+            .controls input,
+            .controls select,
+            .controls button {
+                font-size: 10px;
+                padding: 7px 3px;
+            }
+
+            .chat-header {
+                height: 60px;
+                padding: 0 12px;
+            }
+
+            .chat-title {
+                font-size: 16px;
+            }
+
+            #messages {
                 padding: 10px;
             }
 
@@ -431,400 +364,204 @@
                 max-width: 85%;
             }
 
-            .dropdown-menu {
-                right: -5px;
-            }
         }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="chat-container">
+<div class="app">
 
-{% if not logged_in %}
 
-    <!-- LOGIN -->
+    <!-- =====================================
+         SIDEBAR
+    ====================================== -->
 
-    <div class="auth-container">
+    <div class="sidebar">
 
-        <div class="logo">
-            💬 ChatWave
-        </div>
 
-        <div class="subtitle">
-            Private messaging made simple
-        </div>
+        <div class="header">
 
-        <form action="/login" method="POST">
-
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                required
-                autocomplete="username"
-            >
-
-            <div class="password-box">
-
-                <input
-                    id="login-password"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                    autocomplete="current-password"
-                >
-
-                <button
-                    type="button"
-                    class="show-password"
-                    onclick="togglePassword('login-password', this)"
-                >
-                    👁
-                </button>
-
+            <div class="logo">
+                ChatWave
             </div>
 
-            <button type="submit">
-                Login
-            </button>
-
-        </form>
-
-        <div class="divider">
-            New to ChatWave?
-        </div>
-
-        <form action="/register" method="POST">
-
-            <input
-                type="text"
-                name="username"
-                placeholder="Choose a username"
-                required
-                autocomplete="username"
-            >
-
-            <div class="password-box">
-
-                <input
-                    id="register-password"
-                    type="password"
-                    name="password"
-                    placeholder="Create password (6+ characters)"
-                    required
-                    minlength="6"
-                    autocomplete="new-password"
-                >
-
-                <button
-                    type="button"
-                    class="show-password"
-                    onclick="togglePassword('register-password', this)"
-                >
-                    👁
-                </button>
-
-            </div>
-
-            <button
-                type="submit"
-                class="register-button"
-            >
-                Create Account
-            </button>
-
-        </form>
-
-    </div>
-
-{% else %}
-
-    <!-- HEADER -->
-
-    <div class="header">
-
-        <div class="avatar">
-            💬
-        </div>
-
-        <div class="header-info">
-
-            <h2>
-
-                {% if chat_type == "private" and chat_with %}
-
-                    {{ chat_with }}
-
-                {% elif chat_type == "group" and selected_group %}
-
-                    👥 {{ selected_group.name }}
-
-                {% else %}
-
-                    ChatWave
-
-                {% endif %}
-
-            </h2>
-
-            <div class="online">
-                🟢 {{ username }}
+            <div class="username">
+                👤 {{ username }}
             </div>
 
         </div>
 
-        <!-- THREE DOTS -->
 
-        <div class="menu-container">
+        <!-- ================= USERS ================= -->
 
-            <button
-                type="button"
-                class="menu-button"
-                onclick="toggleMenu()"
-            >
-                ⋮
-            </button>
-
-            <div
-                class="dropdown-menu"
-                id="dropdownMenu"
-            >
-
-                <button
-                    type="button"
-                    onclick="toggleGroupPanel()"
-                >
-                    👥 Group
-                </button>
-
-                {% if chat_type == "private" and chat_with %}
-
-                <button
-                    type="button"
-                    onclick="exitChat()"
-                >
-                    🚪 Exit Chat
-                </button>
-
-                {% endif %}
-
-                {% if chat_type == "group" and selected_group %}
-
-                <button
-                    type="button"
-                    onclick="exitGroup()"
-                >
-                    🚪 Exit Group
-                </button>
-
-                {% if selected_group.creator == username %}
-
-                <button
-                    type="button"
-                    class="danger"
-                    onclick="clearCurrentChat()"
-                >
-                    🗑️ Clear Group Chat
-                </button>
-
-                {% endif %}
-
-                {% endif %}
-
-                {% if chat_type == "private" and chat_with %}
-
-                <button
-                    type="button"
-                    class="danger"
-                    onclick="clearCurrentChat()"
-                >
-                    🗑️ Clear Chat
-                </button>
-
-                {% endif %}
-
-                <button
-                    type="button"
-                    onclick="window.location.href='/logout'"
-                >
-                    🚪 Logout
-                </button>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- PRIVATE CHAT -->
-
-    <div class="chat-selection">
-
-        <div class="selection-title">
-            PRIVATE CHAT
+        <div class="section-title">
+            Other Users
         </div>
 
-        {% if users %}
+        <div class="list">
 
-        <form
-            action="/set-chat"
-            method="POST"
-            class="selection-form"
-        >
-
-            <select
-                name="chat_with"
-                required
-            >
-
-                <option
-                    value=""
-                    disabled
-                    {% if not chat_type == "private" %}
-                    selected
-                    {% endif %}
-                >
-                    Select person
-                </option>
+            {% if users %}
 
                 {% for user in users %}
 
-                <option
-                    value="{{ user }}"
-                    {% if chat_type == "private" and chat_with == user %}
-                    selected
-                    {% endif %}
-                >
-                    {{ user }}
-                </option>
+                    <form
+                        method="POST"
+                        action="/set-chat"
+                        class="user-form"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="chat_with"
+                            value="{{ user }}"
+                        >
+
+                        <div class="user">
+
+                            <button
+                                type="submit"
+                                class="user-button"
+                            >
+                                👤 {{ user }}
+                            </button>
+
+                        </div>
+
+                    </form>
 
                 {% endfor %}
 
-            </select>
+            {% else %}
 
-            <button type="submit">
-                Chat
-            </button>
+                <div class="empty">
+                    No other user yet
+                </div>
 
-        </form>
+            {% endif %}
 
-        {% else %}
-
-        <div style="font-size:12px;color:#777;">
-            No other users yet.
         </div>
 
-        {% endif %}
 
-    </div>
+        <!-- ================= GROUPS ================= -->
 
-    <!-- GROUP PANEL -->
-
-    <div
-        class="group-panel"
-        id="groupPanel"
-    >
-
-        <div class="group-title">
-            GROUPS
+        <div class="section-title">
+            My Groups
         </div>
 
-        <!-- SELECT GROUP -->
+        <div class="list">
 
-        {% if groups %}
-
-        <form
-            action="/set-group"
-            method="POST"
-            class="selection-form"
-        >
-
-            <select
-                name="group_id"
-                required
-            >
-
-                <option
-                    value=""
-                    disabled
-                    {% if chat_type != "group" %}
-                    selected
-                    {% endif %}
-                >
-                    Select group
-                </option>
+            {% if groups %}
 
                 {% for group in groups %}
 
-                <option
-                    value="{{ group.id }}"
-                    {% if chat_type == "group" and group_id == group.id %}
-                    selected
-                    {% endif %}
-                >
-                    {{ group.name }}
-                </option>
+                    <form
+                        method="POST"
+                        action="/set-group"
+                        class="group-form"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="group_id"
+                            value="{{ group.id }}"
+                        >
+
+                        <button
+                            type="submit"
+                            style="
+                                width:100%;
+                                border:none;
+                                background:transparent;
+                                text-align:left;
+                                padding:0;
+                                cursor:pointer;
+                            "
+                        >
+
+                            <div
+                                class="group
+                                {% if group_id|string == group.id|string %}
+                                active
+                                {% endif %}"
+                            >
+
+                                <div class="group-name">
+                                    👥 {{ group.name }}
+                                </div>
+
+                                <div class="group-creator">
+                                    Host: {{ group.creator }}
+                                </div>
+
+                            </div>
+
+                        </button>
+
+                    </form>
 
                 {% endfor %}
 
-            </select>
+            {% else %}
 
-            <button type="submit">
-                Open
-            </button>
-
-        </form>
-
-        {% else %}
-
-        <div style="font-size:12px;color:#777;margin-bottom:8px;">
-            No groups yet.
-        </div>
-
-        {% endif %}
-
-        <!-- CREATE GROUP -->
-
-        <form
-            action="/create-group"
-            method="POST"
-            class="create-group-form"
-        >
-
-            <input
-                type="text"
-                name="group_name"
-                placeholder="New group name"
-                maxlength="50"
-                required
-            >
-
-            <button type="submit">
-                + Group
-            </button>
-
-        </form>
-
-        <!-- ADD MULTIPLE MEMBERS -->
-
-        {% if chat_type == "group" and selected_group %}
-
-            {% if selected_group.creator == username %}
-
-                <div class="group-title">
-                    ADD MEMBERS
+                <div class="empty">
+                    No groups yet
                 </div>
 
-                <form
-                    action="/add-member"
-                    method="POST"
+            {% endif %}
+
+        </div>
+
+
+        <!-- ================= CONTROLS ================= -->
+
+        <div class="controls">
+
+
+            <!-- CREATE GROUP -->
+
+            <form
+                method="POST"
+                action="/create-group"
+            >
+
+                <input
+                    type="text"
+                    name="group_name"
+                    placeholder="New group name"
+                    required
                 >
+
+                <button type="submit">
+                    Create Group
+                </button>
+
+            </form>
+
+
+            {% if selected_group and selected_group.creator == username %}
+
+
+                <!-- ADD MEMBERS -->
+
+                <form
+                    method="POST"
+                    action="/add-member"
+                >
+
+                    <input
+                        type="hidden"
+                        name="group_id"
+                        value="{{ group_id }}"
+                    >
 
                     <select
                         name="members"
-                        class="group-members-select"
                         multiple
+                        size="3"
                     >
 
                         {% for user in users %}
@@ -841,413 +578,240 @@
 
                     </select>
 
-                    <div class="group-hint">
-                        Hold Ctrl and click to select multiple people.
-                    </div>
+                    <button type="submit">
+                        Add Selected Members
+                    </button>
 
-                    <button
-                        type="submit"
-                        class="add-members-button"
-                    >
-                        ➕ Add Selected Members
+                </form>
+
+
+            {% endif %}
+
+
+            {% if group_id %}
+
+                <form
+                    method="POST"
+                    action="/exit-group"
+                >
+
+                    <button type="submit">
+                        Exit Group
                     </button>
 
                 </form>
 
             {% endif %}
 
-        {% endif %}
+
+            {% if chat_type == "private" %}
+
+                <form
+                    method="POST"
+                    action="/exit-chat"
+                >
+
+                    <button type="submit">
+                        Close Private Chat
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+            <!-- LOGOUT -->
+
+            <form
+                method="GET"
+                action="/logout"
+            >
+
+                <button
+                    type="submit"
+                    class="logout"
+                >
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
 
-    <!-- HIDDEN EXIT CHAT -->
 
-    <form
-        id="exitChatForm"
-        action="/exit-chat"
-        method="POST"
-        style="display:none;"
-    ></form>
+    <!-- =====================================
+         CHAT AREA
+    ====================================== -->
 
-    <!-- HIDDEN EXIT GROUP -->
+    <div class="chat">
 
-    <form
-        id="exitGroupForm"
-        action="/exit-group"
-        method="POST"
-        style="display:none;"
-    ></form>
 
-    <!-- HIDDEN CLEAR -->
+        <div class="chat-header">
 
-    <form
-        id="clearChatForm"
-        action="/clear-chat"
-        method="POST"
-        style="display:none;"
-    ></form>
+            <div class="chat-title">
 
-    <!-- MESSAGES -->
+                {% if chat_type == "group" and selected_group %}
 
-    <div
-        class="messages"
-        id="messages"
-    >
+                    👥 {{ selected_group.name }}
 
-        {% if chat_type %}
+                {% elif chat_type == "private" and chat_with %}
+
+                    👤 {{ chat_with }}
+
+                {% else %}
+
+                    ChatWave
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= MESSAGES ================= -->
+
+        <div id="messages">
+
 
             {% if messages %}
 
                 {% for msg in messages %}
 
-                <div
-                    class="message
-                    {% if msg.sender == username %}
-                    my-message
-                    {% endif %}"
-                >
+                    <div
+                        class="message-row
+                        {% if msg.sender == username %}
+                            mine
+                        {% else %}
+                            other
+                        {% endif %}"
+                    >
 
-                    <div class="name">
-                        {{ msg.sender }}
+                        <div class="message">
+
+                            {% if chat_type == "group" %}
+
+                                <div class="sender">
+                                    {{ msg.sender }}
+                                </div>
+
+                            {% endif %}
+
+                            <div class="message-text">
+                                {{ msg.message }}
+                            </div>
+
+                        </div>
+
                     </div>
-
-                    <div class="text">
-                        {{ msg.message }}
-                    </div>
-
-                </div>
 
                 {% endfor %}
 
             {% else %}
 
-                <div class="no-chat">
-                    No messages yet. 👋
+                <div class="empty">
+                    No messages yet
                 </div>
 
             {% endif %}
 
-        {% else %}
 
-            <div class="no-chat">
-                Select a person or group to start chatting. 💬
-            </div>
+        </div>
+
+
+        <!-- ================= SEND ================= -->
+
+        {% if chat_type %}
+
+            <form
+                method="POST"
+                action="/send"
+                class="send-area"
+                id="sendForm"
+            >
+
+                <input
+                    type="text"
+                    name="message"
+                    id="messageInput"
+                    placeholder="Type a message..."
+                    autocomplete="off"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="sendButton"
+                >
+                    ➤
+                </button>
+
+            </form>
 
         {% endif %}
 
+
     </div>
-
-    <!-- SEND -->
-
-    {% if chat_type %}
-
-    <form
-        class="input-area"
-        action="/send"
-        method="POST"
-    >
-
-        <input
-            type="text"
-            name="message"
-            placeholder="Type a message..."
-            required
-            autocomplete="off"
-        >
-
-        <button type="submit">
-            Send
-        </button>
-
-    </form>
-
-    {% endif %}
-
-{% endif %}
 
 </div>
 
+
 <script>
 
-    /* PASSWORD */
+    /* =====================================
+       MESSAGE AUTO REFRESH
+    ====================================== */
 
-    function togglePassword(inputId, button) {
+    {% if chat_type %}
 
-        const input =
-            document.getElementById(inputId);
+    let lastMessageCount =
+        {{ messages|length }};
 
-        if (input.type === "password") {
 
-            input.type = "text";
-            button.textContent = "🙈";
-
-        } else {
-
-            input.type = "password";
-            button.textContent = "👁";
-
-        }
-    }
-
-
-    /* THREE DOT MENU */
-
-    function toggleMenu() {
-
-        const menu =
-            document.getElementById("dropdownMenu");
-
-        if (menu) {
-            menu.classList.toggle("show");
-        }
-    }
-
-
-    /* GROUP PANEL */
-
-    function toggleGroupPanel() {
-
-        const panel =
-            document.getElementById("groupPanel");
-
-        const menu =
-            document.getElementById("dropdownMenu");
-
-        if (panel) {
-            panel.classList.toggle("show");
-        }
-
-        if (menu) {
-            menu.classList.remove("show");
-        }
-    }
-
-
-    /* EXIT CHAT */
-
-    function exitChat() {
-
-        const menu =
-            document.getElementById("dropdownMenu");
-
-        if (menu) {
-            menu.classList.remove("show");
-        }
-
-        if (confirm("Exit this chat?")) {
-
-            document
-                .getElementById("exitChatForm")
-                .submit();
-
-        }
-    }
-
-
-    /* EXIT GROUP */
-
-    function exitGroup() {
-
-        const menu =
-            document.getElementById("dropdownMenu");
-
-        if (menu) {
-            menu.classList.remove("show");
-        }
-
-        if (confirm("Are you sure you want to exit this group?")) {
-
-            document
-                .getElementById("exitGroupForm")
-                .submit();
-
-        }
-    }
-
-
-    /* CLEAR CHAT */
-
-    function clearCurrentChat() {
-
-        const menu =
-            document.getElementById("dropdownMenu");
-
-        if (menu) {
-            menu.classList.remove("show");
-        }
-
-        if (confirm("Clear this chat?")) {
-
-            document
-                .getElementById("clearChatForm")
-                .submit();
-
-        }
-    }
-
-
-    /* CLOSE THREE DOT MENU */
-
-    document.addEventListener(
-        "click",
-        function(event) {
-
-            const container =
-                document.querySelector(".menu-container");
-
-            const menu =
-                document.getElementById("dropdownMenu");
-
-            if (
-                container &&
-                menu &&
-                !container.contains(event.target)
-            ) {
-
-                menu.classList.remove("show");
-
-            }
-
-        }
-    );
-
-
-    /* MESSAGES */
-
-    const messagesBox =
-        document.getElementById("messages");
-
-
-    function scrollToBottom() {
-
-        if (messagesBox) {
-
-            messagesBox.scrollTop =
-                messagesBox.scrollHeight;
-
-        }
-
-    }
-
-
-    /* AUTO REFRESH */
-
-    async function checkMessages() {
-
-        if (!messagesBox) {
-            return;
-        }
+    async function refreshMessages() {
 
         try {
 
             const response =
                 await fetch(
-                    "/messages?time=" +
-                    Date.now()
+                    "/messages?t=" + Date.now(),
+                    {
+                        cache: "no-store"
+                    }
                 );
+
 
             if (!response.ok) {
                 return;
             }
 
-            const messages =
+
+            const data =
                 await response.json();
 
-            const currentCount =
-                messagesBox.querySelectorAll(
-                    ".message"
-                ).length;
+
+            if (!Array.isArray(data)) {
+                return;
+            }
 
 
-            if (messages.length !== currentCount) {
+            if (
+                data.length !==
+                lastMessageCount
+            ) {
 
-                messagesBox.innerHTML = "";
-
-                const currentUser =
-                    "{{ username }}";
-
-
-                if (messages.length === 0) {
-
-                    const empty =
-                        document.createElement("div");
-
-                    empty.className =
-                        "no-chat";
-
-                    empty.textContent =
-                        "No messages yet. 👋";
-
-                    messagesBox.appendChild(empty);
-
-                } else {
-
-                    messages.forEach(
-                        function(msg) {
-
-                            const messageDiv =
-                                document.createElement("div");
-
-                            messageDiv.className =
-                                "message";
-
-
-                            if (
-                                msg.sender === currentUser
-                            ) {
-
-                                messageDiv.classList.add(
-                                    "my-message"
-                                );
-
-                            }
-
-
-                            const nameDiv =
-                                document.createElement("div");
-
-                            nameDiv.className =
-                                "name";
-
-                            nameDiv.textContent =
-                                msg.sender;
-
-
-                            const textDiv =
-                                document.createElement("div");
-
-                            textDiv.className =
-                                "text";
-
-                            textDiv.textContent =
-                                msg.message;
-
-
-                            messageDiv.appendChild(
-                                nameDiv
-                            );
-
-                            messageDiv.appendChild(
-                                textDiv
-                            );
-
-                            messagesBox.appendChild(
-                                messageDiv
-                            );
-
-                        }
-                    );
-
-                }
-
-                scrollToBottom();
+                location.reload();
 
             }
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.log(
-                "Message check error:",
+                "Refresh error:",
                 error
             );
 
@@ -1256,14 +820,76 @@
     }
 
 
-    scrollToBottom();
+    /*
+        Check for new messages every 1 second.
+    */
 
     setInterval(
-        checkMessages,
+        refreshMessages,
         1000
     );
 
+    {% endif %}
+
+
+    /* =====================================
+       ENTER TO SEND
+    ====================================== */
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+
+    if (input) {
+
+        input.focus();
+
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    document
+                        .getElementById("sendForm")
+                        .submit();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================
+       SCROLL TO BOTTOM
+    ====================================== */
+
+    const messages =
+        document.getElementById(
+            "messages"
+        );
+
+
+    if (messages) {
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }
+
 </script>
 
+
 </body>
+
 </html>
