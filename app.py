@@ -12,24 +12,32 @@ MESSAGES_FILE = "messages.json"
 GROUPS_FILE = "groups.json"
 
 
-# =========================
+# ============================================================
 # JSON FUNCTIONS
-# =========================
+# ============================================================
 
 def load_json(filename, default):
+
     if not os.path.exists(filename):
         return default
 
     try:
         with open(filename, "r", encoding="utf-8") as file:
             return json.load(file)
-    except:
+
+    except Exception:
         return default
 
 
 def save_json(filename, data):
+
     with open(filename, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=2)
+        json.dump(
+            data,
+            file,
+            ensure_ascii=False,
+            indent=2
+        )
 
 
 def load_users():
@@ -56,18 +64,28 @@ def save_groups(groups):
     save_json(GROUPS_FILE, groups)
 
 
-# =========================
+# ============================================================
 # HOME
-# =========================
+# ============================================================
 
 @app.route("/")
 def home():
 
+    # --------------------------------------------------------
+    # NOT LOGGED IN
+    # --------------------------------------------------------
+
     if "username" not in session:
+
         return render_template(
             "index.html",
             logged_in=False
         )
+
+
+    # --------------------------------------------------------
+    # LOGGED IN
+    # --------------------------------------------------------
 
     username = session["username"]
 
@@ -75,25 +93,41 @@ def home():
     groups = load_groups()
     messages = load_messages()
 
-    # All users except current user
+
+    # --------------------------------------------------------
+    # OTHER USERS
+    # --------------------------------------------------------
+
     other_users = [
-        user for user in users
+        user
+        for user in users
         if user != username
     ]
 
-    # Groups where current user is a member
+
+    # --------------------------------------------------------
+    # USER GROUPS
+    # --------------------------------------------------------
+
     user_groups = []
 
     for group_id, group in groups.items():
 
-        if username in group.get("members", []):
+        members = group.get("members", [])
+
+        if username in members:
 
             user_groups.append({
                 "id": group_id,
                 "name": group.get("name", ""),
                 "creator": group.get("creator", ""),
-                "members": group.get("members", [])
+                "members": members
             })
+
+
+    # --------------------------------------------------------
+    # CURRENT CHAT
+    # --------------------------------------------------------
 
     chat_type = session.get("chat_type")
     chat_with = session.get("chat_with")
@@ -101,9 +135,10 @@ def home():
 
     visible_messages = []
 
-    # =========================
+
+    # ========================================================
     # PRIVATE CHAT
-    # =========================
+    # ========================================================
 
     if chat_type == "private" and chat_with:
 
@@ -116,31 +151,43 @@ def home():
             receiver = msg.get("receiver")
 
             if (
-                sender == username and receiver == chat_with
+                sender == username
+                and receiver == chat_with
             ) or (
-                sender == chat_with and receiver == username
+                sender == chat_with
+                and receiver == username
             ):
+
                 visible_messages.append(msg)
 
-    # =========================
+
+    # ========================================================
     # GROUP CHAT
-    # =========================
+    # ========================================================
 
     elif chat_type == "group" and group_id:
 
         group = groups.get(group_id)
 
-        if group and username in group.get("members", []):
+        if group:
 
-            for msg in messages:
+            members = group.get("members", [])
 
-                if (
-                    msg.get("type") == "group"
-                    and str(msg.get("group_id")) == str(group_id)
-                ):
-                    visible_messages.append(msg)
+            if username in members:
+
+                for msg in messages:
+
+                    if (
+                        msg.get("type") == "group"
+                        and str(msg.get("group_id"))
+                        == str(group_id)
+                    ):
+
+                        visible_messages.append(msg)
+
 
     selected_group = groups.get(group_id)
+
 
     return render_template(
         "index.html",
@@ -156,83 +203,164 @@ def home():
     )
 
 
-# =========================
+# ============================================================
+# REGISTER PAGE
+# ============================================================
+
+@app.route("/register-page")
+def register_page():
+
+    if "username" in session:
+        return redirect("/")
+
+    return render_template(
+        "register.html"
+    )
+
+
+# ============================================================
 # REGISTER
-# =========================
+# ============================================================
 
 @app.route("/register", methods=["POST"])
 def register():
 
-    username = request.form.get("username", "").strip()
-    password = request.form.get("password", "")
+    username = request.form.get(
+        "username",
+        ""
+    ).strip()
 
+    password = request.form.get(
+        "password",
+        ""
+    )
+
+
+    # Empty
     if not username or not password:
-        return "Username and password are required."
 
+        return """
+        <h2>Username and password are required.</h2>
+        <a href="/register-page">Go Back</a>
+        """
+
+
+    # Username length
     if len(username) < 3:
-        return "Username must be at least 3 characters."
 
+        return """
+        <h2>Username must be at least 3 characters.</h2>
+        <a href="/register-page">Go Back</a>
+        """
+
+
+    # Password length
     if len(password) < 6:
-        return "Password must be at least 6 characters."
+
+        return """
+        <h2>Password must be at least 6 characters.</h2>
+        <a href="/register-page">Go Back</a>
+        """
+
 
     users = load_users()
 
-    if username in users:
-        return "Username already exists."
 
+    # Existing user
+    if username in users:
+
+        return """
+        <h2>Username already exists.</h2>
+        <a href="/register-page">Try Again</a>
+        """
+
+
+    # Create user
     users[username] = {
         "password": generate_password_hash(password)
     }
 
+
     save_users(users)
 
+
+    # Automatically login
     session.clear()
 
     session["username"] = username
     session["chat_type"] = None
 
+
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # LOGIN
-# =========================
+# ============================================================
 
 @app.route("/login", methods=["POST"])
 def login():
 
-    username = request.form.get("username", "").strip()
-    password = request.form.get("password", "")
+    username = request.form.get(
+        "username",
+        ""
+    ).strip()
+
+    password = request.form.get(
+        "password",
+        ""
+    )
+
 
     users = load_users()
 
-    if username not in users:
-        return "Invalid username or password."
 
-    stored_password = users[username].get("password", "")
+    if username not in users:
+
+        return """
+        <h2>Invalid username or password.</h2>
+        <a href="/">Try Again</a>
+        """
+
+
+    stored_password = users[username].get(
+        "password",
+        ""
+    )
+
 
     try:
+
         valid_password = check_password_hash(
             stored_password,
             password
         )
-    except:
+
+    except Exception:
+
         valid_password = False
 
+
     if not valid_password:
-        return "Invalid username or password."
+
+        return """
+        <h2>Invalid username or password.</h2>
+        <a href="/">Try Again</a>
+        """
+
 
     session.clear()
 
     session["username"] = username
     session["chat_type"] = None
 
+
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # LOGOUT
-# =========================
+# ============================================================
 
 @app.route("/logout")
 def logout():
@@ -242,9 +370,9 @@ def logout():
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # PRIVATE CHAT
-# =========================
+# ============================================================
 
 @app.route("/set-chat", methods=["POST"])
 def set_chat():
@@ -252,28 +380,41 @@ def set_chat():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
-    chat_with = request.form.get("chat_with", "").strip()
+
+    chat_with = request.form.get(
+        "chat_with",
+        ""
+    ).strip()
+
 
     users = load_users()
+
 
     if chat_with not in users:
         return redirect("/")
 
+
     if chat_with == username:
         return redirect("/")
+
 
     session["chat_type"] = "private"
     session["chat_with"] = chat_with
 
-    session.pop("group_id", None)
+    session.pop(
+        "group_id",
+        None
+    )
+
 
     return redirect("/")
 
 
-# =========================
-# EXIT PRIVATE CHAT
-# =========================
+# ============================================================
+# CLOSE PRIVATE CHAT
+# ============================================================
 
 @app.route("/exit-chat", methods=["POST"])
 def exit_chat():
@@ -281,15 +422,21 @@ def exit_chat():
     if "username" not in session:
         return redirect("/")
 
+
     session["chat_type"] = None
-    session.pop("chat_with", None)
+
+    session.pop(
+        "chat_with",
+        None
+    )
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # CREATE GROUP
-# =========================
+# ============================================================
 
 @app.route("/create-group", methods=["POST"])
 def create_group():
@@ -297,41 +444,60 @@ def create_group():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
+
 
     group_name = request.form.get(
         "group_name",
         ""
     ).strip()
 
+
     if not group_name:
         return redirect("/")
 
+
     groups = load_groups()
 
-    group_id = str(uuid.uuid4())
+
+    group_id = str(
+        uuid.uuid4()
+    )
+
 
     groups[group_id] = {
+
         "name": group_name,
+
         "creator": username,
+
         "members": [
             username
         ]
+
     }
+
 
     save_groups(groups)
 
+
     session["chat_type"] = "group"
+
     session["group_id"] = group_id
 
-    session.pop("chat_with", None)
+    session.pop(
+        "chat_with",
+        None
+    )
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # SELECT GROUP
-# =========================
+# ============================================================
 
 @app.route("/set-group", methods=["POST"])
 def set_group():
@@ -339,34 +505,49 @@ def set_group():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
+
 
     group_id = request.form.get(
         "group_id",
         ""
     )
 
+
     groups = load_groups()
 
     group = groups.get(group_id)
 
+
     if not group:
         return redirect("/")
 
-    if username not in group.get("members", []):
+
+    if username not in group.get(
+        "members",
+        []
+    ):
+
         return redirect("/")
 
+
     session["chat_type"] = "group"
+
     session["group_id"] = group_id
 
-    session.pop("chat_with", None)
+    session.pop(
+        "chat_with",
+        None
+    )
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # ADD MULTIPLE MEMBERS
-# =========================
+# ============================================================
 
 @app.route("/add-member", methods=["POST"])
 def add_member():
@@ -374,64 +555,89 @@ def add_member():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
+
 
     group_id = request.form.get(
         "group_id",
         ""
     )
 
-    # Supports multiple values:
-    # name="members"
-    members = request.form.getlist("members")
 
-    # Also supports old HTML:
-    # name="member"
+    members = request.form.getlist(
+        "members"
+    )
+
+
+    # Support old single member field too
     old_member = request.form.get(
         "member",
         ""
     ).strip()
 
+
     if old_member:
-        members.append(old_member)
+
+        members.append(
+            old_member
+        )
+
 
     groups = load_groups()
     users = load_users()
 
+
     group = groups.get(group_id)
+
 
     if not group:
         return redirect("/")
 
-    # Only host/creator can add members
+
+    # Only creator can add members
     if group.get("creator") != username:
+
         return redirect("/")
 
-    # Add every selected member
+
     for new_member in members:
 
         new_member = new_member.strip()
 
+
         if not new_member:
             continue
+
 
         if new_member not in users:
             continue
 
-        if new_member not in group["members"]:
-            group["members"].append(new_member)
+
+        if new_member not in group.get(
+            "members",
+            []
+        ):
+
+            group["members"].append(
+                new_member
+            )
+
 
     save_groups(groups)
 
+
     session["chat_type"] = "group"
+
     session["group_id"] = group_id
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # EXIT GROUP
-# =========================
+# ============================================================
 
 @app.route("/exit-group", methods=["POST"])
 def exit_group():
@@ -439,60 +645,108 @@ def exit_group():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
-    group_id = session.get("group_id")
+
+    group_id = session.get(
+        "group_id"
+    )
+
 
     if not group_id:
         return redirect("/")
+
 
     groups = load_groups()
 
     group = groups.get(group_id)
 
+
     if not group:
+
         session["chat_type"] = None
-        session.pop("group_id", None)
+
+        session.pop(
+            "group_id",
+            None
+        )
+
         return redirect("/")
 
-    # Host cannot leave while group still exists
-    # Instead, host can remove/delete the group.
+
+    # --------------------------------------------------------
+    # HOST
+    # --------------------------------------------------------
+
     if group.get("creator") == username:
 
-        # Delete the group
+        # Delete group
         del groups[group_id]
 
         save_groups(groups)
 
-        # Remove group messages
+
+        # Delete group messages
         messages = load_messages()
 
+
         messages = [
-            msg for msg in messages
+
+            msg
+
+            for msg in messages
+
             if not (
                 msg.get("type") == "group"
-                and str(msg.get("group_id")) == str(group_id)
+                and str(
+                    msg.get("group_id")
+                ) == str(group_id)
             )
+
         ]
+
 
         save_messages(messages)
 
+
+    # --------------------------------------------------------
+    # NORMAL MEMBER
+    # --------------------------------------------------------
+
     else:
 
-        # Normal member leaves
-        if username in group.get("members", []):
-            group["members"].remove(username)
+        members = group.get(
+            "members",
+            []
+        )
+
+
+        if username in members:
+
+            members.remove(
+                username
+            )
+
+
+        group["members"] = members
 
         save_groups(groups)
 
+
     session["chat_type"] = None
-    session.pop("group_id", None)
+
+    session.pop(
+        "group_id",
+        None
+    )
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # SEND MESSAGE
-# =========================
+# ============================================================
 
 @app.route("/send", methods=["POST"])
 def send():
@@ -500,86 +754,133 @@ def send():
     if "username" not in session:
         return redirect("/")
 
+
     sender = session["username"]
+
 
     message = request.form.get(
         "message",
         ""
     ).strip()
 
+
     if not message:
         return redirect("/")
 
+
     messages = load_messages()
 
-    chat_type = session.get("chat_type")
+    chat_type = session.get(
+        "chat_type"
+    )
 
-    # =========================
+
+    # ========================================================
     # PRIVATE MESSAGE
-    # =========================
+    # ========================================================
 
     if chat_type == "private":
 
-        receiver = session.get("chat_with")
+        receiver = session.get(
+            "chat_with"
+        )
+
 
         if not receiver:
             return redirect("/")
 
+
         users = load_users()
+
 
         if receiver not in users:
             return redirect("/")
 
+
         messages.append({
-            "id": str(uuid.uuid4()),
+
+            "id": str(
+                uuid.uuid4()
+            ),
+
             "type": "private",
+
             "sender": sender,
+
             "receiver": receiver,
+
             "message": message
+
         })
 
-    # =========================
+
+    # ========================================================
     # GROUP MESSAGE
-    # =========================
+    # ========================================================
 
     elif chat_type == "group":
 
-        group_id = session.get("group_id")
+        group_id = session.get(
+            "group_id"
+        )
+
 
         if not group_id:
             return redirect("/")
 
+
         groups = load_groups()
 
-        group = groups.get(group_id)
+        group = groups.get(
+            group_id
+        )
+
 
         if not group:
             return redirect("/")
 
+
         # IMPORTANT:
-        # Host AND every group member can send
-        if sender not in group.get("members", []):
+        # Every group member can send
+        if sender not in group.get(
+            "members",
+            []
+        ):
+
             return redirect("/")
 
+
         messages.append({
-            "id": str(uuid.uuid4()),
+
+            "id": str(
+                uuid.uuid4()
+            ),
+
             "type": "group",
+
             "group_id": group_id,
+
             "sender": sender,
+
             "message": message
+
         })
 
+
     else:
+
         return redirect("/")
 
+
     save_messages(messages)
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # GET MESSAGES
-# =========================
+# ============================================================
 
 @app.route("/messages")
 def get_messages():
@@ -587,79 +888,124 @@ def get_messages():
     if "username" not in session:
         return jsonify([])
 
+
     username = session["username"]
 
-    chat_type = session.get("chat_type")
+    chat_type = session.get(
+        "chat_type"
+    )
+
 
     messages = load_messages()
 
     result = []
 
-    # =========================
+
+    # ========================================================
     # PRIVATE
-    # =========================
+    # ========================================================
 
     if chat_type == "private":
 
-        chat_with = session.get("chat_with")
+        chat_with = session.get(
+            "chat_with"
+        )
+
 
         if not chat_with:
             return jsonify([])
 
+
         for msg in messages:
 
-            if msg.get("type") != "private":
+            if msg.get(
+                "type"
+            ) != "private":
+
                 continue
 
-            sender = msg.get("sender")
-            receiver = msg.get("receiver")
+
+            sender = msg.get(
+                "sender"
+            )
+
+            receiver = msg.get(
+                "receiver"
+            )
+
 
             if (
+
                 sender == username
                 and receiver == chat_with
+
             ) or (
+
                 sender == chat_with
                 and receiver == username
+
             ):
 
                 result.append(msg)
 
-    # =========================
+
+    # ========================================================
     # GROUP
-    # =========================
+    # ========================================================
 
     elif chat_type == "group":
 
-        group_id = session.get("group_id")
+        group_id = session.get(
+            "group_id"
+        )
+
 
         if not group_id:
             return jsonify([])
 
+
         groups = load_groups()
 
-        group = groups.get(group_id)
+        group = groups.get(
+            group_id
+        )
+
 
         if not group:
             return jsonify([])
 
-        # Only group members can receive
-        if username not in group.get("members", []):
+
+        # User must be a member
+        if username not in group.get(
+            "members",
+            []
+        ):
+
             return jsonify([])
+
 
         for msg in messages:
 
-            if msg.get("type") != "group":
+            if msg.get(
+                "type"
+            ) != "group":
+
                 continue
 
-            if str(msg.get("group_id")) == str(group_id):
+
+            if str(
+                msg.get("group_id")
+            ) == str(group_id):
+
                 result.append(msg)
+
 
     return jsonify(result)
 
 
-# =========================
+# ============================================================
 # CLEAR CHAT
-# =========================
+# ============================================================
 
 @app.route("/clear-chat", methods=["POST"])
 def clear_chat():
@@ -667,90 +1013,147 @@ def clear_chat():
     if "username" not in session:
         return redirect("/")
 
+
     username = session["username"]
 
-    chat_type = session.get("chat_type")
+    chat_type = session.get(
+        "chat_type"
+    )
+
 
     messages = load_messages()
 
-    # =========================
+
+    # ========================================================
     # PRIVATE CHAT
-    # =========================
+    # ========================================================
 
     if chat_type == "private":
 
-        chat_with = session.get("chat_with")
+        chat_with = session.get(
+            "chat_with"
+        )
+
 
         if not chat_with:
             return redirect("/")
 
+
         new_messages = []
+
 
         for msg in messages:
 
-            if msg.get("type") != "private":
+            if msg.get(
+                "type"
+            ) != "private":
 
                 new_messages.append(msg)
+
                 continue
 
-            sender = msg.get("sender")
-            receiver = msg.get("receiver")
 
-            current_chat = (
-                sender == username
-                and receiver == chat_with
-            ) or (
-                sender == chat_with
-                and receiver == username
+            sender = msg.get(
+                "sender"
             )
 
+            receiver = msg.get(
+                "receiver"
+            )
+
+
+            current_chat = (
+
+                sender == username
+                and receiver == chat_with
+
+            ) or (
+
+                sender == chat_with
+                and receiver == username
+
+            )
+
+
             if not current_chat:
+
                 new_messages.append(msg)
 
-        save_messages(new_messages)
 
-    # =========================
+        save_messages(
+            new_messages
+        )
+
+
+    # ========================================================
     # GROUP CHAT
-    # =========================
+    # ========================================================
 
     elif chat_type == "group":
 
-        group_id = session.get("group_id")
+        group_id = session.get(
+            "group_id"
+        )
+
 
         groups = load_groups()
 
-        group = groups.get(group_id)
+        group = groups.get(
+            group_id
+        )
+
 
         if not group:
             return redirect("/")
 
-        # Only host can clear group chat
-        if group.get("creator") != username:
+
+        # Only host can clear
+        if group.get(
+            "creator"
+        ) != username:
+
             return redirect("/")
 
+
         new_messages = []
+
 
         for msg in messages:
 
             if not (
-                msg.get("type") == "group"
-                and str(msg.get("group_id")) == str(group_id)
+
+                msg.get(
+                    "type"
+                ) == "group"
+
+                and
+
+                str(
+                    msg.get("group_id")
+                ) == str(group_id)
+
             ):
 
                 new_messages.append(msg)
 
-        save_messages(new_messages)
+
+        save_messages(
+            new_messages
+        )
+
 
     return redirect("/")
 
 
-# =========================
+# ============================================================
 # RUN
-# =========================
+# ============================================================
 
 if __name__ == "__main__":
+
     app.run(
         debug=True,
         host="0.0.0.0",
         port=5000
     )
+    
