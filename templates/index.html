@@ -131,7 +131,7 @@
 
 
         /* =========================
-           GROUP CONTROLS
+           CONTROLS
         ========================= */
 
         .controls {
@@ -226,7 +226,7 @@
             max-width: 70%;
             padding: 8px 12px;
             border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
             word-wrap: break-word;
         }
 
@@ -364,6 +364,23 @@
                 max-width: 85%;
             }
 
+            .send-area {
+                padding: 7px;
+                gap: 6px;
+            }
+
+            #messageInput {
+                min-width: 0;
+                font-size: 14px;
+                padding: 11px 14px;
+            }
+
+            #sendButton {
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+            }
+
         }
 
     </style>
@@ -376,9 +393,9 @@
 <div class="app">
 
 
-    <!-- =====================================
+    <!-- =========================
          SIDEBAR
-    ====================================== -->
+    ========================== -->
 
     <div class="sidebar">
 
@@ -396,7 +413,9 @@
         </div>
 
 
-        <!-- ================= USERS ================= -->
+        <!-- =========================
+             OTHER USERS
+        ========================== -->
 
         <div class="section-title">
             Other Users
@@ -446,7 +465,9 @@
         </div>
 
 
-        <!-- ================= GROUPS ================= -->
+        <!-- =========================
+             GROUPS
+        ========================== -->
 
         <div class="section-title">
             My Groups
@@ -473,12 +494,12 @@
                         <button
                             type="submit"
                             style="
-                                width:100%;
-                                border:none;
-                                background:transparent;
-                                text-align:left;
-                                padding:0;
-                                cursor:pointer;
+                                width: 100%;
+                                border: none;
+                                background: transparent;
+                                text-align: left;
+                                padding: 0;
+                                cursor: pointer;
                             "
                         >
 
@@ -516,7 +537,9 @@
         </div>
 
 
-        <!-- ================= CONTROLS ================= -->
+        <!-- =========================
+             CONTROLS
+        ========================== -->
 
         <div class="controls">
 
@@ -542,10 +565,9 @@
             </form>
 
 
+            <!-- ADD MEMBERS -->
+
             {% if selected_group and selected_group.creator == username %}
-
-
-                <!-- ADD MEMBERS -->
 
                 <form
                     method="POST"
@@ -584,9 +606,10 @@
 
                 </form>
 
-
             {% endif %}
 
+
+            <!-- EXIT GROUP -->
 
             {% if group_id %}
 
@@ -603,6 +626,8 @@
 
             {% endif %}
 
+
+            <!-- CLOSE PRIVATE CHAT -->
 
             {% if chat_type == "private" %}
 
@@ -641,9 +666,9 @@
     </div>
 
 
-    <!-- =====================================
-         CHAT AREA
-    ====================================== -->
+    <!-- =========================
+         CHAT
+    ========================== -->
 
     <div class="chat">
 
@@ -671,10 +696,11 @@
         </div>
 
 
-        <!-- ================= MESSAGES ================= -->
+        <!-- =========================
+             MESSAGES
+        ========================== -->
 
         <div id="messages">
-
 
             {% if messages %}
 
@@ -717,11 +743,12 @@
 
             {% endif %}
 
-
         </div>
 
 
-        <!-- ================= SEND ================= -->
+        <!-- =========================
+             SEND MESSAGE
+        ========================== -->
 
         {% if chat_type %}
 
@@ -760,9 +787,9 @@
 
 <script>
 
-    /* =====================================
-       MESSAGE AUTO REFRESH
-    ====================================== */
+    /* =========================
+       AUTO REFRESH
+    ========================== */
 
     {% if chat_type %}
 
@@ -797,18 +824,13 @@
             }
 
 
-            if (
-                data.length !==
-                lastMessageCount
-            ) {
+            if (data.length !== lastMessageCount) {
 
                 location.reload();
 
             }
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.log(
                 "Refresh error:",
@@ -820,10 +842,6 @@
     }
 
 
-    /*
-        Check for new messages every 1 second.
-    */
-
     setInterval(
         refreshMessages,
         1000
@@ -832,9 +850,9 @@
     {% endif %}
 
 
-    /* =====================================
+    /* =========================
        ENTER TO SEND
-    ====================================== */
+    ========================== */
 
     const input =
         document.getElementById(
@@ -870,9 +888,9 @@
     }
 
 
-    /* =====================================
+    /* =========================
        SCROLL TO BOTTOM
-    ====================================== */
+    ========================== */
 
     const messages =
         document.getElementById(
