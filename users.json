@@ -1,1 +1,5 @@
-{}
+{
+  "sohamsanap": {
+    "password": "scrypt:32768:8:1$UGZMuIyBRKeSeY11$1a412467e6bb61ab09a16df950110a585174b1b578eb85dcb36eda0eddfe5eb1d16f097013542a235c63025f56b6d0fcbf85f11e2686e6191b5104639429d065"
+  }
+}
