@@ -2,475 +2,479 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ChatWave</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f8ff;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* =====================================================
-           LOGIN / REGISTER PAGE
-        ===================================================== */
-
-        .auth-page {
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, #0066ff, #003c99);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-box {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 16px;
-            padding: 35px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-        }
-
-        .auth-logo {
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            color: #0066ff;
-            margin-bottom: 5px;
-        }
-
-        .auth-subtitle {
-            text-align: center;
-            color: #777;
-            margin-bottom: 28px;
-        }
-
-        .auth-box input {
-            width: 100%;
-            padding: 13px;
-            margin-bottom: 12px;
-            border: 1px solid #ccd6e5;
-            border-radius: 7px;
-            outline: none;
-            font-size: 15px;
-        }
-
-        .auth-box input:focus {
-            border-color: #0066ff;
-        }
-
-        .auth-button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 7px;
-            background: #0066ff;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .auth-button:hover {
-            background: #0052cc;
-        }
-
-        .auth-switch {
-            text-align: center;
-            margin-top: 18px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .auth-switch a {
-            color: #0066ff;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .auth-switch a:hover {
-            text-decoration: underline;
-        }
-
-        /* =====================================================
-           MAIN APP
-        ===================================================== */
-
-        .app {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
-
-        .sidebar {
-            width: 310px;
-            background: white;
-            border-right: 1px solid #d9e2f0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            background: #0066ff;
-            color: white;
-            padding: 18px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .username {
-            margin-top: 7px;
-            font-size: 14px;
-        }
-
-        .section-title {
-            padding: 14px;
-            font-weight: bold;
-            color: #555;
-            border-bottom: 1px solid #eee;
-        }
-
-        .list {
-            overflow-y: auto;
-            max-height: 35vh;
-        }
-
-        /* =====================================================
-           USERS
-        ===================================================== */
-
-        .user {
-            padding: 13px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
-
-        .user:hover {
-            background: #eef5ff;
-        }
-
-        .user-form {
-            margin: 0;
-        }
-
-        .user-button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: left;
-            padding: 0;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        /* =====================================================
-           GROUPS
-        ===================================================== */
-
-        .group {
-            padding: 14px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-        }
-
-        .group:hover {
-            background: #eef5ff;
-        }
-
-        .group.active {
-            background: #dbeafe;
-            border-left: 4px solid #0066ff;
-        }
-
-        .group-name {
-            font-weight: bold;
-        }
-
-        .group-creator {
-            font-size: 11px;
-            color: #777;
-            margin-top: 3px;
-        }
-
-        /* =====================================================
-           CONTROLS
-        ===================================================== */
-
-        .controls {
-            padding: 10px;
-            border-top: 1px solid #ddd;
-            overflow-y: auto;
-        }
-
-        .controls form {
-            margin-bottom: 7px;
-        }
-
-        .controls input,
-        .controls select {
-            width: 100%;
-            padding: 9px;
-            border: 1px solid #ccd6e5;
-            border-radius: 5px;
-            margin-bottom: 6px;
-        }
-
-        .controls button {
-            width: 100%;
-            padding: 9px;
-            border: none;
-            border-radius: 5px;
-            background: #0066ff;
-            color: white;
-            cursor: pointer;
-        }
-
-        .controls button:hover {
-            background: #0052cc;
-        }
-
-        .logout {
-            background: #dc3545 !important;
-        }
-
-        /* =====================================================
-           CHAT
-        ===================================================== */
-
-        .chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .chat-header {
-            height: 65px;
-            background: #0066ff;
-            color: white;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .chat-title {
-            font-size: 19px;
-            font-weight: bold;
-        }
-
-        /* =====================================================
-           MESSAGES
-        ===================================================== */
-
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f4f8ff;
-        }
-
-        .message-row {
-            display: flex;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .message-row.mine {
-            justify-content: flex-end;
-        }
-
-        .message-row.other {
-            justify-content: flex-start;
-        }
-
-        .message {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            word-wrap: break-word;
-        }
-
-        .mine .message {
-            background: #dbeafe;
-        }
-
-        .other .message {
-            background: white;
-        }
-
-        .sender {
-            color: #0066ff;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .message-text {
-            font-size: 15px;
-            white-space: pre-wrap;
-        }
-
-        .empty {
-            text-align: center;
-            color: #777;
-            padding: 40px 10px;
-        }
-
-        /* =====================================================
-           SEND
-        ===================================================== */
-
-        .send-area {
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            background: white;
-            border-top: 1px solid #d9e2f0;
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 13px 17px;
-            border: 1px solid #ccd6e5;
-            border-radius: 25px;
-            outline: none;
-            font-size: 15px;
-        }
-
-        #messageInput:focus {
-            border-color: #0066ff;
-        }
-
-        #sendButton {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: #0066ff;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        #sendButton:hover {
-            background: #0052cc;
-        }
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
-        @media (max-width: 700px) {
-
-            .sidebar {
-                width: 105px;
-                min-width: 105px;
-            }
-
-            .header {
-                padding: 12px 7px;
-            }
-
-            .logo {
-                font-size: 17px;
-            }
-
-            .username {
-                font-size: 10px;
-                word-break: break-word;
-            }
-
-            .section-title {
-                font-size: 11px;
-                padding: 9px 6px;
-            }
-
-            .user,
-            .group {
-                padding: 11px 6px;
-                font-size: 12px;
-                word-break: break-word;
-            }
-
-            .group-creator {
-                display: none;
-            }
-
-            .controls {
-                padding: 5px;
-            }
-
-            .controls input,
-            .controls select,
-            .controls button {
-                font-size: 10px;
-                padding: 7px 3px;
-            }
-
-            .chat-header {
-                height: 60px;
-                padding: 0 12px;
-            }
-
-            .chat-title {
-                font-size: 16px;
-            }
-
-            #messages {
-                padding: 10px;
-            }
-
-            .message {
-                max-width: 85%;
-            }
-
-            .send-area {
-                padding: 7px;
-                gap: 6px;
-            }
-
-            #messageInput {
-                min-width: 0;
-                font-size: 14px;
-                padding: 11px 14px;
-            }
-
-            #sendButton {
-                width: 45px;
-                height: 45px;
-                min-width: 45px;
-            }
-
-            .auth-box {
-                padding: 28px 20px;
-            }
-
-            .auth-logo {
-                font-size: 28px;
-            }
-        }
-
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ChatWave</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f8ff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+.auth-page {
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, #0066ff, #003c99);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border-radius: 16px;
+    padding: 35px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.25);
+}
+
+.auth-logo {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #0066ff;
+    margin-bottom: 5px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.auth-box input {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #ccd6e5;
+    border-radius: 7px;
+    outline: none;
+    font-size: 15px;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 7px;
+    background: #0066ff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 18px;
+    color: #666;
+}
+
+.auth-switch a {
+    color: #0066ff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.error {
+    background: #ffe5e5;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* =====================================================
+   APP
+===================================================== */
+
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 310px;
+    background: white;
+    border-right: 1px solid #d9e2f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #0066ff;
+    color: white;
+    padding: 18px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.username {
+    margin-top: 7px;
+    font-size: 14px;
+}
+
+.section-title {
+    padding: 14px;
+    font-weight: bold;
+    color: #555;
+    border-bottom: 1px solid #eee;
+}
+
+.list {
+    overflow-y: auto;
+    max-height: 35vh;
+}
+
+/* USERS */
+
+.user {
+    padding: 13px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.user:hover {
+    background: #eef5ff;
+}
+
+.user-button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+/* GROUP */
+
+.group {
+    padding: 14px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.group:hover {
+    background: #eef5ff;
+}
+
+.group.active {
+    background: #dbeafe;
+    border-left: 4px solid #0066ff;
+}
+
+.group-name {
+    font-weight: bold;
+}
+
+.group-creator {
+    font-size: 11px;
+    color: #777;
+    margin-top: 3px;
+}
+
+/* CONTROLS */
+
+.controls {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.controls form {
+    margin-bottom: 7px;
+}
+
+.controls input,
+.controls select {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #ccd6e5;
+    border-radius: 5px;
+    margin-bottom: 6px;
+}
+
+.controls button {
+    width: 100%;
+    padding: 9px;
+    border: none;
+    border-radius: 5px;
+    background: #0066ff;
+    color: white;
+    cursor: pointer;
+}
+
+.logout {
+    background: #dc3545 !important;
+}
+
+/* CHAT */
+
+.chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.chat-header {
+    height: 65px;
+    background: #0066ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.chat-title {
+    font-size: 19px;
+    font-weight: bold;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f4f8ff;
+}
+
+.message-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.mine {
+    justify-content: flex-end;
+}
+
+.other {
+    justify-content: flex-start;
+}
+
+.message {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    word-wrap: break-word;
+}
+
+.mine .message {
+    background: #dbeafe;
+}
+
+.other .message {
+    background: white;
+}
+
+.sender {
+    color: #0066ff;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.message-text {
+    font-size: 15px;
+    white-space: pre-wrap;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
+    padding: 40px 10px;
+}
+
+/* SEND */
+
+.send-area {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #d9e2f0;
+}
+
+#messageInput {
+    flex: 1;
+    padding: 13px 17px;
+    border: 1px solid #ccd6e5;
+    border-radius: 25px;
+    outline: none;
+    font-size: 15px;
+}
+
+#sendButton {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #0066ff;
+    color: white;
+    font-size: 20px;
+}
+
+/* =====================================================
+   THREE DOT MENU
+===================================================== */
+
+.menu-button {
+    display: none;
+}
+
+.mobile-menu {
+    display: none;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 105px;
+        min-width: 105px;
+    }
+
+    .header {
+        padding: 12px 7px;
+    }
+
+    .logo {
+        font-size: 17px;
+    }
+
+    .username {
+        font-size: 10px;
+        word-break: break-word;
+    }
+
+    .section-title {
+        font-size: 11px;
+        padding: 9px 6px;
+    }
+
+    .user,
+    .group {
+        padding: 11px 6px;
+        font-size: 12px;
+        word-break: break-word;
+    }
+
+    .group-creator {
+        display: none;
+    }
+
+    .controls {
+        display: none;
+    }
+
+    .chat-header {
+        height: 60px;
+        padding: 0 10px;
+        justify-content: space-between;
+    }
+
+    .chat-title {
+        font-size: 16px;
+    }
+
+    .menu-button {
+        display: block;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .mobile-menu {
+        position: fixed;
+        top: 55px;
+        right: 10px;
+        width: 220px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(0,0,0,.25);
+        padding: 10px;
+        z-index: 999;
+    }
+
+    .mobile-menu.show {
+        display: block;
+    }
+
+    .mobile-menu button,
+    .mobile-menu input,
+    .mobile-menu select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 7px;
+        border: 1px solid #ccd6e5;
+        border-radius: 6px;
+        background: white;
+    }
+
+    .mobile-menu button {
+        background: #0066ff;
+        color: white;
+        border: none;
+    }
+
+    .mobile-menu .logout {
+        background: #dc3545;
+    }
+
+    #messages {
+        padding: 10px;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+
+    .send-area {
+        padding: 7px;
+    }
+
+    #messageInput {
+        min-width: 0;
+        font-size: 14px;
+    }
+
+    #sendButton {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -480,7 +484,7 @@
 {% if not logged_in %}
 
 <!-- =====================================================
-     LOGIN PAGE
+     LOGIN / REGISTER
 ===================================================== -->
 
 <div class="auth-page">
@@ -491,41 +495,88 @@
             ChatWave
         </div>
 
-        <div class="auth-subtitle">
-            Welcome back! Login to continue.
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
         </div>
 
-        <form method="POST" action="/login">
+        {% endif %}
 
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                required
-            >
 
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                required
-            >
+        {% if register_page %}
 
-            <button
-                type="submit"
-                class="auth-button"
-            >
-                Login
-            </button>
+            <div class="auth-subtitle">
+                Create your ChatWave account
+            </div>
 
-        </form>
+            <form method="POST" action="/register">
 
-        <div class="auth-switch">
-            Don't have an account?
-            <a href="/register-page">
-                Create Account
-            </a>
-        </div>
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    minlength="3"
+                    required
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    minlength="6"
+                    required
+                >
+
+                <button class="auth-button">
+                    Create Account
+                </button>
+
+            </form>
+
+            <div class="auth-switch">
+                Already have an account?
+                <a href="/">
+                    Login
+                </a>
+            </div>
+
+        {% else %}
+
+            <div class="auth-subtitle">
+                Welcome back! Login to continue.
+            </div>
+
+            <form method="POST" action="/login">
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    required
+                >
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                >
+
+                <button class="auth-button">
+                    Login
+                </button>
+
+            </form>
+
+            <div class="auth-switch">
+                Don't have an account?
+                <a href="/register-page">
+                    Create Account
+                </a>
+            </div>
+
+        {% endif %}
 
     </div>
 
@@ -534,16 +585,15 @@
 
 {% else %}
 
+
 <!-- =====================================================
-     CHAT APPLICATION
+     CHAT APP
 ===================================================== -->
 
 <div class="app">
 
 
-    <!-- =================================================
-         SIDEBAR
-    ================================================== -->
+    <!-- SIDEBAR -->
 
     <div class="sidebar">
 
@@ -560,7 +610,7 @@
         </div>
 
 
-        <!-- OTHER USERS -->
+        <!-- USERS -->
 
         <div class="section-title">
             Other Users
@@ -575,7 +625,6 @@
                     <form
                         method="POST"
                         action="/set-chat"
-                        class="user-form"
                     >
 
                         <input
@@ -586,10 +635,7 @@
 
                         <div class="user">
 
-                            <button
-                                type="submit"
-                                class="user-button"
-                            >
+                            <button class="user-button">
                                 👤 {{ user }}
                             </button>
 
@@ -625,7 +671,6 @@
                     <form
                         method="POST"
                         action="/set-group"
-                        class="group-form"
                     >
 
                         <input
@@ -635,21 +680,19 @@
                         >
 
                         <button
-                            type="submit"
                             style="
-                                width:100%;
-                                border:none;
-                                background:transparent;
-                                text-align:left;
-                                padding:0;
-                                cursor:pointer;
+                            width:100%;
+                            border:none;
+                            background:transparent;
+                            padding:0;
+                            text-align:left;
                             "
                         >
 
                             <div class="group
-                                {% if group_id|string == group.id|string %}
-                                active
-                                {% endif %}
+                            {% if group_id|string == group.id|string %}
+                            active
+                            {% endif %}
                             ">
 
                                 <div class="group-name">
@@ -679,12 +722,147 @@
         </div>
 
 
-        <!-- CONTROLS -->
+        <!-- DESKTOP CONTROLS -->
 
         <div class="controls">
 
+            <form method="POST" action="/create-group">
 
-            <!-- CREATE GROUP -->
+                <input
+                    type="text"
+                    name="group_name"
+                    placeholder="New group name"
+                    required
+                >
+
+                <button>
+                    Create Group
+                </button>
+
+            </form>
+
+
+            {% if selected_group and selected_group.creator == username %}
+
+                <form method="POST" action="/add-member">
+
+                    <input
+                        type="hidden"
+                        name="group_id"
+                        value="{{ group_id }}"
+                    >
+
+                    <select
+                        name="members"
+                        multiple
+                        size="3"
+                    >
+
+                        {% for user in users %}
+
+                            {% if user not in selected_group.members %}
+
+                                <option value="{{ user }}">
+                                    {{ user }}
+                                </option>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </select>
+
+                    <button>
+                        Add Selected Members
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+            {% if group_id %}
+
+                <form method="POST" action="/exit-group">
+
+                    <button>
+                        Exit Group
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+            {% if chat_type == "private" %}
+
+                <form method="POST" action="/exit-chat">
+
+                    <button>
+                        Close Private Chat
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
+            <form method="GET" action="/logout">
+
+                <button class="logout">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHAT -->
+
+    <div class="chat">
+
+        <div class="chat-header">
+
+            <div class="chat-title">
+
+                {% if chat_type == "group" and selected_group %}
+
+                    👥 {{ selected_group.name }}
+
+                {% elif chat_type == "private" and chat_with %}
+
+                    👤 {{ chat_with }}
+
+                {% else %}
+
+                    ChatWave
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- THREE DOTS -->
+
+            <button
+                class="menu-button"
+                onclick="toggleMenu()"
+            >
+                ⋮
+            </button>
+
+        </div>
+
+
+        <!-- MOBILE MENU -->
+
+        <div
+            class="mobile-menu"
+            id="mobileMenu"
+        >
 
             <form
                 method="POST"
@@ -698,14 +876,12 @@
                     required
                 >
 
-                <button type="submit">
-                    Create Group
+                <button>
+                    ➕ Create Group
                 </button>
 
             </form>
 
-
-            <!-- ADD MEMBERS -->
 
             {% if selected_group and selected_group.creator == username %}
 
@@ -740,16 +916,14 @@
 
                     </select>
 
-                    <button type="submit">
-                        Add Selected Members
+                    <button>
+                        👥 Add Members
                     </button>
 
                 </form>
 
             {% endif %}
 
-
-            <!-- EXIT GROUP -->
 
             {% if group_id %}
 
@@ -758,16 +932,14 @@
                     action="/exit-group"
                 >
 
-                    <button type="submit">
-                        Exit Group
+                    <button>
+                        🚪 Exit Group
                     </button>
 
                 </form>
 
             {% endif %}
 
-
-            <!-- CLOSE PRIVATE CHAT -->
 
             {% if chat_type == "private" %}
 
@@ -776,8 +948,8 @@
                     action="/exit-chat"
                 >
 
-                    <button type="submit">
-                        Close Private Chat
+                    <button>
+                        ✕ Close Chat
                     </button>
 
                 </form>
@@ -785,53 +957,16 @@
             {% endif %}
 
 
-            <!-- LOGOUT -->
-
             <form
                 method="GET"
                 action="/logout"
             >
 
-                <button
-                    type="submit"
-                    class="logout"
-                >
-                    Logout
+                <button class="logout">
+                    🚪 Logout
                 </button>
 
             </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         CHAT
-    ================================================== -->
-
-    <div class="chat">
-
-
-        <div class="chat-header">
-
-            <div class="chat-title">
-
-                {% if chat_type == "group" and selected_group %}
-
-                    👥 {{ selected_group.name }}
-
-                {% elif chat_type == "private" and chat_with %}
-
-                    👤 {{ chat_with }}
-
-                {% else %}
-
-                    ChatWave
-
-                {% endif %}
-
-            </div>
 
         </div>
 
@@ -845,11 +980,11 @@
                 {% for msg in messages %}
 
                     <div class="message-row
-                        {% if msg.sender == username %}
-                        mine
-                        {% else %}
-                        other
-                        {% endif %}
+                    {% if msg.sender == username %}
+                    mine
+                    {% else %}
+                    other
+                    {% endif %}
                     ">
 
                         <div class="message">
@@ -923,127 +1058,145 @@
 
 <script>
 
-    /* =====================================================
-       AUTO REFRESH
-    ===================================================== */
+/* =====================================================
+   THREE DOT MENU
+===================================================== */
 
-    {% if logged_in and chat_type %}
+function toggleMenu() {
 
-    let lastMessageCount =
-        {{ messages|length }};
+    const menu =
+        document.getElementById(
+            "mobileMenu"
+        );
 
+    if (menu) {
 
-    async function refreshMessages() {
+        menu.classList.toggle(
+            "show"
+        );
 
-        try {
+    }
 
-            const response =
-                await fetch(
-                    "/messages?t=" + Date.now(),
-                    {
-                        cache: "no-store"
-                    }
-                );
-
-
-            if (!response.ok) {
-                return;
-            }
+}
 
 
-            const data =
-                await response.json();
+/* =====================================================
+   AUTO REFRESH
+===================================================== */
+
+{% if logged_in and chat_type %}
+
+let lastMessageCount =
+    {{ messages|length }};
 
 
-            if (!Array.isArray(data)) {
-                return;
-            }
+async function refreshMessages() {
 
+    try {
 
-            if (data.length !== lastMessageCount) {
-
-                location.reload();
-
-            }
-
-        } catch (error) {
-
-            console.log(
-                "Refresh error:",
-                error
+        const response =
+            await fetch(
+                "/messages?t=" + Date.now(),
+                {
+                    cache: "no-store"
+                }
             );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if (!Array.isArray(data)) {
+            return;
+        }
+
+        if (
+            data.length !==
+            lastMessageCount
+        ) {
+
+            location.reload();
 
         }
 
+    } catch (error) {
+
+        console.log(
+            "Refresh error:",
+            error
+        );
+
     }
 
+}
 
-    setInterval(
-        refreshMessages,
-        1000
+
+setInterval(
+    refreshMessages,
+    1000
+);
+
+{% endif %}
+
+
+/* =====================================================
+   ENTER TO SEND
+===================================================== */
+
+const input =
+    document.getElementById(
+        "messageInput"
     );
 
-    {% endif %}
+if (input) {
 
+    input.focus();
 
-    /* =====================================================
-       ENTER TO SEND
-    ===================================================== */
+    input.addEventListener(
+        "keydown",
+        function(event) {
 
-    const input =
-        document.getElementById(
-            "messageInput"
-        );
+            if (
+                event.key === "Enter" &&
+                !event.shiftKey
+            ) {
 
+                event.preventDefault();
 
-    if (input) {
-
-        input.focus();
-
-
-        input.addEventListener(
-            "keydown",
-            function(event) {
-
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
-
-                    event.preventDefault();
-
-                    document
-                        .getElementById("sendForm")
-                        .submit();
-
-                }
+                document
+                    .getElementById(
+                        "sendForm"
+                    )
+                    .submit();
 
             }
-        );
 
-    }
+        }
+    );
 
-
-    /* =====================================================
-       SCROLL
-    ===================================================== */
-
-    const messages =
-        document.getElementById(
-            "messages"
-        );
+}
 
 
-    if (messages) {
+/* =====================================================
+   SCROLL
+===================================================== */
 
-        messages.scrollTop =
-            messages.scrollHeight;
+const messages =
+    document.getElementById(
+        "messages"
+    );
 
-    }
+if (messages) {
+
+    messages.scrollTop =
+        messages.scrollHeight;
+
+}
 
 </script>
 
-
 </body>
-
 </html>
