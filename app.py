@@ -708,6 +708,55 @@ def get_messages():
 
 
 # ============================================================
+# =========================
+# REMOVE MEMBER FROM GROUP
+# =========================
+
+@app.route("/remove-member", methods=["POST"])
+def remove_member():
+
+    if "username" not in session:
+        return redirect("/")
+
+    username = session["username"]
+
+    group_id = request.form.get("group_id", "").strip()
+    member = request.form.get("member", "").strip()
+
+    if not group_id or not member:
+        return redirect("/")
+
+    groups = load_groups()
+
+    group = groups.get(group_id)
+
+    if not group:
+        return redirect("/")
+
+    # Only group host can remove members
+    if group.get("creator") != username:
+        return redirect("/")
+
+    # Host cannot remove himself
+    if member == group.get("creator"):
+        return redirect("/")
+
+    # Remove member
+    if member in group.get("members", []):
+        group["members"].remove(member)
+
+    save_groups(groups)
+
+    # If the removed user was currently inside this group,
+    # their current group chat is cleared on their next request.
+    if (
+        session.get("username") == member
+        and str(session.get("group_id")) == str(group_id)
+    ):
+        session["chat_type"] = None
+        session.pop("group_id", None)
+
+    return redirect("/")
 # RUN
 # ============================================================
 
